@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+            prism:ViewModelLocator.AutowireViewModel="True"
+            x:Class="RATBVFormsPrism.Views.BusTimeTable"
+            Title="{Binding Title}">
+  <TabbedPage.Resources>
+    <ResourceDictionary>
+      <OnPlatform x:Key="LastUpdatedGridHeight" x:TypeArguments="GridLength"
+                  WinPhone="0"
+                  Android="25"
+                  iOS="25"/>
+      
+      <Style x:Key="TitleLabelStyle" TargetType="Label">
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="FontSize" Value="Medium"/>
+        <Setter Property="VerticalOptions" Value="Center"/>
+        <Setter Property="HorizontalOptions" Value="Center"/>
+      </Style>
+      <Style x:Key="NormalLabelStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="Medium"/>
+        <Setter Property="VerticalOptions" Value="Center"/>
+      </Style>
+      <Style x:Key="LastUpdatedLabelStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="Medium"/>
+        <Setter Property="HorizontalOptions" Value="End"/>
+      </Style>
+      <Style x:Key="LastUpdatedStackLayoutStyle" TargetType="StackLayout">
+        <Setter Property="Padding" Value="0,5,5,0"/>
+      </Style>
+
+      <DataTemplate x:Key="BusTimeTableListViewDataTemplate">
+        <ViewCell>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="2*"/>
+              <ColumnDefinition Width="8*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" HorizontalOptions="Center"
+                   Style="{StaticResource NormalLabelStyle}"
+                   Text="{Binding Hour}"/>
+            <Label Grid.Column="1" HorizontalOptions="Start"
+                   Style="{StaticResource NormalLabelStyle}"
+                   Text="{Binding Minutes}" />
+          </Grid>
+        </ViewCell>
+      </DataTemplate>
+    </ResourceDictionary>
+  </TabbedPage.Resources>
+  
+  <TabbedPage.Children>
+    <ContentPage Title="Week Days">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="2*"/>
+          <ColumnDefinition Width="8*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="{StaticResource LastUpdatedGridHeight}" />
+          <RowDefinition Height="30"/>
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout Grid.ColumnSpan="2"
+                     Style="{StaticResource LastUpdatedStackLayoutStyle}">
+          <Label Style="{StaticResource LastUpdatedLabelStyle}"
+                 Text="{Binding LastUpdated, StringFormat='Updated on {0}'}" />
+        </StackLayout>
+        <Label Text="Hour" Grid.Row="1"
+               Style="{StaticResource TitleLabelStyle}"/>
+        <Label Text="Minutes" Grid.Row="1" Grid.Column="1" 
+               Style="{StaticResource TitleLabelStyle}"/>
+        <ListView Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="Start" IsPullToRefreshEnabled="True"
+                  ItemsSource="{Binding BusTimeTableWeekdays}"
+                  ItemSelected="BusTime_OnItemSelected"
+                  ItemTemplate="{StaticResource BusTimeTableListViewDataTemplate}"
+                  RefreshCommand="{Binding RefreshCommand}"
+                  IsRefreshing="{Binding IsBusy, Mode=OneWay}">
+        </ListView>
+      </Grid>
+    </ContentPage>
+    <ContentPage Title="Saturday" >
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="2*"/>
+          <ColumnDefinition Width="8*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="{StaticResource LastUpdatedGridHeight}"/>
+          <RowDefinition Height="30"/>
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout Grid.ColumnSpan="2"
+                     Style="{StaticResource LastUpdatedStackLayoutStyle}">
+          <Label Style="{StaticResource LastUpdatedLabelStyle}"
+                 Text="{Binding LastUpdated, StringFormat='Updated on {0}'}" />
+        </StackLayout>
+        <Label Text="Hour" Grid.Row="1"
+               Style="{StaticResource TitleLabelStyle}"/>
+        <Label Text="Minutes" Grid.Row="1" Grid.Column="1" 
+               Style="{StaticResource TitleLabelStyle}"/>
+        <ListView Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="Start"
+                  ItemsSource="{Binding BusTimeTableSaturday}"
+                  ItemSelected="BusTime_OnItemSelected"
+                  ItemTemplate="{StaticResource BusTimeTableListViewDataTemplate}">
+        </ListView>
+      </Grid>
+    </ContentPage>
+    <ContentPage Title="Sunday" >
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="2*"/>
+          <ColumnDefinition Width="8*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="{StaticResource LastUpdatedGridHeight}"/>
+          <RowDefinition Height="30"/>
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout Grid.ColumnSpan="2"
+                     Style="{StaticResource LastUpdatedStackLayoutStyle}">
+          <Label Style="{StaticResource LastUpdatedLabelStyle}"
+                 Text="{Binding LastUpdated, StringFormat='Updated on {0}'}" />
+        </StackLayout>
+        <Label Text="Hour" Grid.Row="1"
+               Style="{StaticResource TitleLabelStyle}"/>
+        <Label Text="Minutes" Grid.Row="1" Grid.Column="1" 
+               Style="{StaticResource TitleLabelStyle}"/>
+        <ListView Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="Start"
+                  ItemsSource="{Binding BusTimeTableSunday}"
+                  ItemSelected="BusTime_OnItemSelected"
+                  ItemTemplate="{StaticResource BusTimeTableListViewDataTemplate}">
+        </ListView>
+      </Grid>
+    </ContentPage>
+  </TabbedPage.Children>
+</TabbedPage>
