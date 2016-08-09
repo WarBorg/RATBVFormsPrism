@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -34,9 +35,6 @@ namespace RATBVFormsPrism.Services
                 var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
 
                 var response = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
-
-                //await Task.Delay(5000);
-                Thread.
 
                 Stream responseStream = response.GetResponseStream();
 
