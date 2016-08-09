@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RATBVFormsPrism", "RATBVFormsPrism\RATBVFormsPrism\RATBVFormsPrism.csproj", "{8E74D528-E863-4C77-9DEA-F8D2FB9B5298}"
 EndProject
@@ -135,8 +135,6 @@ Global
 		{6DD2E9C3-9C86-4CC8-B7C4-20EAB6465ACA}.Debug|iPhone.Build.0 = Debug|Any CPU
 		{6DD2E9C3-9C86-4CC8-B7C4-20EAB6465ACA}.Debug|iPhone.Deploy.0 = Debug|Any CPU
 		{6DD2E9C3-9C86-4CC8-B7C4-20EAB6465ACA}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{6DD2E9C3-9C86-4CC8-B7C4-20EAB6465ACA}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{6DD2E9C3-9C86-4CC8-B7C4-20EAB6465ACA}.Debug|iPhoneSimulator.Deploy.0 = Debug|Any CPU
 		{6DD2E9C3-9C86-4CC8-B7C4-20EAB6465ACA}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{6DD2E9C3-9C86-4CC8-B7C4-20EAB6465ACA}.Debug|x64.Build.0 = Debug|Any CPU
 		{6DD2E9C3-9C86-4CC8-B7C4-20EAB6465ACA}.Debug|x64.Deploy.0 = Debug|Any CPU
@@ -230,6 +228,8 @@ Global
 		{B57FBA77-3B4A-4400-BC77-191414DD30D4}.AppStore|x86.Build.0 = Release|x86
 		{B57FBA77-3B4A-4400-BC77-191414DD30D4}.AppStore|x86.Deploy.0 = Release|x86
 		{B57FBA77-3B4A-4400-BC77-191414DD30D4}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B57FBA77-3B4A-4400-BC77-191414DD30D4}.Debug|Any CPU.Build.0 = Debug|x86
+		{B57FBA77-3B4A-4400-BC77-191414DD30D4}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{B57FBA77-3B4A-4400-BC77-191414DD30D4}.Debug|ARM.ActiveCfg = Debug|ARM
 		{B57FBA77-3B4A-4400-BC77-191414DD30D4}.Debug|ARM.Build.0 = Debug|ARM
 		{B57FBA77-3B4A-4400-BC77-191414DD30D4}.Debug|ARM.Deploy.0 = Debug|ARM
