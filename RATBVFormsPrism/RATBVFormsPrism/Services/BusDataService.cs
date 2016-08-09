@@ -156,8 +156,8 @@ namespace RATBVFormsPrism.Services
 
         public async Task<int> InsertOrReplaceBusStationsAsync(IEnumerable<BusStationModel> busStations)
         {
-            var busLineId = busStations.FirstOrDefault().BusLineId;
-            var busDirection = busStations.FirstOrDefault().Direction;
+            var busLineId = busStations.FirstOrDefault()?.BusLineId ?? 0;
+            var busDirection = busStations.FirstOrDefault()?.Direction ?? string.Empty;
 
             var storedBusStations = await GetBusStationsByNameAsync(busLineId, busDirection);
 
@@ -216,7 +216,7 @@ namespace RATBVFormsPrism.Services
 
         public async Task<int> InsertOrReplaceBusTimeTablesAsync(IEnumerable<BusTimeTableModel> busTimeTables)
         {
-            var busStationId = busTimeTables.FirstOrDefault().BusStationId;
+            var busStationId = busTimeTables.FirstOrDefault()?.BusStationId ?? 0;
 
             var storedBusTimeTables = await GetBusTimeTableByBusStationId(busStationId);
 
