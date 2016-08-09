@@ -46,7 +46,8 @@ namespace RATBVFormsPrism.ViewModels
                         var parameters = new NavigationParameters();
                         parameters.Add(AppNavigation.BusStation, _busStation);
 
-                        await _navigationService.NavigateAsync<BusTimeTableViewModel>(parameters);
+                        //await _navigationService.NavigateAsync<BusTimeTableViewModel>(parameters);
+                        await _navigationService.NavigateAsync(nameof(BusTimeTable), parameters);
                     }
                 });
             }

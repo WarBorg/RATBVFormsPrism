@@ -29,7 +29,8 @@ namespace RATBVFormsPrism.ViewModels
         {
             if (!CrossConnectivity.Current.IsConnected)
             {
-                UserDialogs.Instance.ErrorToast("No Internet connection detected");
+                //UserDialogs.Instance.ErrorToast("No Internet connection detected");
+                UserDialogs.Instance.ShowError("No Internet connection detected");
 
                 return false;
             }

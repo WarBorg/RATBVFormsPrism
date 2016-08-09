@@ -46,8 +46,8 @@ namespace RATBVFormsPrism.ViewModels
                         parameters.Add(AppNavigation.BusLine, _busLine);
 
                         //await _navigationService.Navigate($"{nameof(RATBVNavigation)}/{nameof(BusLines)}/{nameof(BusStations)}", parameters);
-                        //await _navigationService.NavigateAsync(nameof(BusStations), parameters);
-                        await _navigationService.NavigateAsync<BusStationsViewModel>(parameters);
+                        //await _navigationService.NavigateAsync<BusStationsViewModel>(parameters);
+                        await _navigationService.NavigateAsync(nameof(BusStations), parameters);
                     }
                 });
             }

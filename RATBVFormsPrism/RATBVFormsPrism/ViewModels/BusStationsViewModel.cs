@@ -179,7 +179,8 @@ namespace RATBVFormsPrism.ViewModels
 
             await DownloadAllStationsSchedualsAsync();
 
-            UserDialogs.Instance.SuccessToast("Download complete for all bus stations");
+            //UserDialogs.Instance.SuccessToast("Download complete for all bus stations");
+            UserDialogs.Instance.ShowSuccess("Download complete for all bus stations");
         }
         
         #endregion Commands

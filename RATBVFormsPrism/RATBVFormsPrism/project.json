@@ -1,0 +1,24 @@
+﻿{
+  "supports": {},
+  "dependencies": {
+    "Acr.UserDialogs": "6.1.1",
+    "HtmlAgilityPack.NetCore": "1.5.0.1",
+    "NETStandard.Library": "1.6.0",
+    "Newtonsoft.Json": "9.0.1",
+    "Prism.Forms": "6.1.0-pre7",
+    "Prism.Unity.Forms": "6.2.0-pre7",
+    "Splat": "1.6.2",
+    "SQLite.Net-PCL": "3.1.1",
+    "SQLite.Net.Async-PCL": "3.1.1",
+    "SQLiteNetExtensions": "1.3.0",
+    "SQLiteNetExtensions.Async": "1.3.0",
+    "System.Net.Requests": "4.0.11",
+    "Xam.Plugin.Connectivity": "2.2.12",
+    "Xamarin.Forms": "2.3.1.114"
+  },
+  "frameworks": {
+    "netstandard1.4": {
+      "imports": "portable-net45+win8+wpa81+wp8"
+    }
+  }
+}

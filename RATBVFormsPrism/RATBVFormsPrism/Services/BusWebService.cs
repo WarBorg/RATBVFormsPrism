@@ -35,6 +35,9 @@ namespace RATBVFormsPrism.Services
 
                 var response = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
 
+                //await Task.Delay(5000);
+                Thread.
+
                 Stream responseStream = response.GetResponseStream();
 
                 var doc = new HtmlDocument();
@@ -62,7 +65,7 @@ namespace RATBVFormsPrism.Services
 
                     for (int i = 0; i < items.Length; i++)
                     {
-                        if (items[i].InnerText.Trim().Replace("&nbsp;", String.Empty).Length == 0)
+                        if (items[i].InnerText.Trim().Replace("&nbsp;", string.Empty).Length == 0)
                             continue;
 
                         var str = items[i].InnerText
@@ -71,7 +74,7 @@ namespace RATBVFormsPrism.Services
                             .Replace("&acirc;", "â");
 
                         string linkNormalWay = items[i].Descendants("a").FirstOrDefault().Attributes["href"].Value;
-                        string linkReverseWay = String.Empty;
+                        string linkReverseWay = string.Empty;
                         
                         // Check if is in new format or not
                         if (linkNormalWay.Contains("dus")) // Old format
@@ -130,7 +133,7 @@ namespace RATBVFormsPrism.Services
             // When creating the route skip the first two items as they are the line number
             route = line_route
                 .Skip(2)
-                .Aggregate((k, l) => String.Format("{0} {1}", k, l));
+                .Aggregate((k, l) => $"{k} {l}");
 
             if (i == 0)
                 type = BusTypes.Bus;
@@ -191,7 +194,7 @@ namespace RATBVFormsPrism.Services
 
         public async Task<List<BusStationModel>> GetBusStationsAsync(string lineNumberLink)
         {
-            string lineNumberStationsLink = String.Empty;
+            var lineNumberStationsLink = string.Empty;
 
             var busStations = new List<BusStationModel>();
 
@@ -208,7 +211,7 @@ namespace RATBVFormsPrism.Services
 
         private async Task<List<BusStationModel>> GetBusStationsAsyncOld(string lineNumberStationsLink, List<BusStationModel> busStations)
         {   
-            string url = String.Format("{0}{1}", "http://www.ratbv.ro/afisaje/", lineNumberStationsLink);
+            var url = string.Format("{0}{1}", "http://www.ratbv.ro/afisaje/", lineNumberStationsLink);
 
             var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
 
@@ -348,8 +351,8 @@ namespace RATBVFormsPrism.Services
 
         private void GetTimeTablePerTimeofWeek(List<BusTimeTableModel> busTimeTable, HtmlNode tableWeekdays, string timeOfWeek)
         {
-            var hour = String.Empty;
-            var minutes = String.Empty;
+            var hour = string.Empty;
+            var minutes = string.Empty;
 
             // Skip first three items because of time of week div, hour div and minutes div
             foreach (HtmlNode node in tableWeekdays.Descendants("div").ToList().Skip(3))
@@ -364,7 +367,7 @@ namespace RATBVFormsPrism.Services
                         minutes += " " + minuteNode.InnerText.Trim();
                 }
 
-                if (hour != String.Empty && minutes != String.Empty)
+                if (string.IsNullOrEmpty(hour) && string.IsNullOrEmpty(minutes))
                 {
                     busTimeTable.Add(new BusTimeTableModel
                     {
@@ -373,7 +376,7 @@ namespace RATBVFormsPrism.Services
                         TimeOfWeek = timeOfWeek
                     });
 
-                    hour = minutes = String.Empty;
+                    hour = minutes = string.Empty;
                 }
             }
         }

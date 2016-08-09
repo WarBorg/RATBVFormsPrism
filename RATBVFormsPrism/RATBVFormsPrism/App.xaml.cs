@@ -23,8 +23,10 @@ namespace RATBVFormsPrism
         {
             Container.RegisterTypeForNavigation<RATBVNavigation>();
             Container.RegisterTypeForNavigation<BusLines>();
-            Container.RegisterTypeForNavigation<BusStations, BusStationsViewModel>();
-            Container.RegisterTypeForNavigation<BusTimeTable, BusTimeTableViewModel>();
+            Container.RegisterTypeForNavigation<BusStations>();
+            //Container.RegisterTypeForNavigation<BusStations, BusStationsViewModel>();
+            Container.RegisterTypeForNavigation<BusTimeTable>();
+            //Container.RegisterTypeForNavigation<BusTimeTable, BusTimeTableViewModel>();
         }
 
         protected override void ConfigureContainer()
