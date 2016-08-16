@@ -17,7 +17,7 @@
     "Xamarin.Forms": "2.3.1.114"
   },
   "frameworks": {
-    "netstandard1.4": {
+    "netstandard1.3": {
       "imports": "portable-net45+win8+wpa81+wp8"
     }
   }

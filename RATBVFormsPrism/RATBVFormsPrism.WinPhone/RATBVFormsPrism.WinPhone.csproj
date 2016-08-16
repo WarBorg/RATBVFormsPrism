@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6855D339-F01E-4A4A-A283-27CFA9628258}</ProjectGuid>
+    <ProjectGuid>{D9B36100-8972-48FD-9A45-314F5786811A}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RATBVFormsPrism.WinPhone</RootNamespace>
@@ -14,9 +14,6 @@
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{76F1466A-8B6D-4E39-A767-685A06062A39};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -82,6 +79,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -89,8 +90,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Renderers\StyledTabbedPageRenderer.cs" />
-    <Compile Include="Services\SQLite_WinPhone.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -107,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="MainPage.xaml">
@@ -115,14 +115,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RATBVFormsPrism\RATBVFormsPrism.csproj">
-      <Name>RATBVFormsPrism</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, version=12.0">
+      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Phone</Name>
+    </SDKReference>
     <SDKReference Include="SQLite.WP81, Version=3.12.2">
       <Name>SQLite for Windows Phone 8.1</Name>
     </SDKReference>
