@@ -1,12 +1,12 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "Acr.UserDialogs": "6.1.1",
+    "Acr.UserDialogs": "6.1.2",
     "HtmlAgilityPack.NetCore": "1.5.0.1",
     "NETStandard.Library": "1.6.0",
     "Newtonsoft.Json": "9.0.1",
-    "Prism.Forms": "6.1.0-pre7",
-    "Prism.Unity.Forms": "6.2.0-pre7",
+    "Prism.Forms": "6.2.0",
+    "Prism.Unity.Forms": "6.2.0",
     "Splat": "1.6.2",
     "SQLite.Net-PCL": "3.1.1",
     "SQLite.Net.Async-PCL": "3.1.1",

@@ -13,6 +13,7 @@ using RATBVFormsPrism.Constants;
 //using RATBVFormsPrism.Core.ViewModels;
 using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.Models;
+using Acr.UserDialogs;
 
 namespace RATBVFormsPrism.ViewModels
 {
@@ -139,20 +140,26 @@ namespace RATBVFormsPrism.ViewModels
         {
             AllBusLines = new List<BusLineModel>();
 
-            // Create tables, if they already exist nothing will happen
-            await _busDataService.CreateAllTablesAsync();
-            
-            var busLinesNumber = await _busDataService.CountBusLines;
-
-            if (busLinesNumber == 0)
+            using (UserDialogs.Instance.Loading($"Fetching Data... "))
             {
-                await GetWebBusLinesAsync();
+                //if (!_connectivityService.IsConnected())
+                //    return;
 
-                await AddBusLinesToDatabaseAsync();
-            }
-            else
-            {
-                await GetLocalBusLinesAsync();
+                // Create tables, if they already exist nothing will happen
+                await _busDataService.CreateAllTablesAsync();
+
+                var busLinesNumber = await _busDataService.CountBusLines;
+
+                if (busLinesNumber == 0)
+                {
+                    await GetWebBusLinesAsync();
+
+                    await AddBusLinesToDatabaseAsync();
+                }
+                else
+                {
+                    await GetLocalBusLinesAsync();
+                }
             }
         }
 

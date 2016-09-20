@@ -12,6 +12,7 @@ using Xamarin.Forms;
 using RATBVFormsPrism.Constants;
 using RATBVFormsPrism.Models;
 using RATBVFormsPrism.Interfaces;
+using Acr.UserDialogs;
 
 namespace RATBVFormsPrism.ViewModels
 {
@@ -158,7 +159,8 @@ namespace RATBVFormsPrism.ViewModels
         {
             BusStation = parameters[AppNavigation.BusStation] as BusStationModel;
 
-            await GetBusTimeTableAsync();
+            using (UserDialogs.Instance.Loading($"Fetching Data... "))
+                await GetBusTimeTableAsync();
         }
 
         #endregion Navigation

@@ -196,8 +196,9 @@ namespace RATBVFormsPrism.ViewModels
         {
             //TODO use JSON serialization when sending data between pages
             BusLine = parameters[AppNavigation.BusLine] as BusLineModel;
-            
-            await GetBusStationsAsync();
+
+            using (UserDialogs.Instance.Loading($"Fetching Data... "))
+                await GetBusStationsAsync();
         }
 
         #endregion Navigation
