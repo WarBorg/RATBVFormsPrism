@@ -25,6 +25,10 @@ namespace RATBVFormsPrism.ViewModels
         {
         }
 
+        public virtual void OnNavigatingTo(NavigationParameters parameters)
+        {
+        }
+
         protected bool IsInternetAvailable()
         {
             if (!CrossConnectivity.Current.IsConnected)
