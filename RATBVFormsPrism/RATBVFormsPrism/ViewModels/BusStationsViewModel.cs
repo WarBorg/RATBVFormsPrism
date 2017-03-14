@@ -187,18 +187,12 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Navigation
 
-        public override void OnNavigatedFrom(NavigationParameters parameters)
-        {
-
-        }
-
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
             //TODO use JSON serialization when sending data between pages
             BusLine = parameters[AppNavigation.BusLine] as BusLineModel;
 
-            using (UserDialogs.Instance.Loading($"Fetching Data... "))
-                await GetBusStationsAsync();
+            await GetBusStationsAsync();
         }
 
         #endregion Navigation
@@ -244,16 +238,19 @@ namespace RATBVFormsPrism.ViewModels
             if (!IsInternetAvailable())
                 return;
 
-            List<BusStationModel> busStations = await _busWebService.GetBusStationsAsync(linkDirection);
+            using (UserDialogs.Instance.Loading($"Fetching Data... "))
+            {
+                List<BusStationModel> busStations = await _busWebService.GetBusStationsAsync(linkDirection);
 
-            if (busStations == null)
-                return;
+                if (busStations == null)
+                    return;
 
-            LastUpdated = String.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+                LastUpdated = String.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
 
-            await AddBusStationsToDatabaseAsync(busStations, direction);
-            
-            BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService)).ToList();
+                await AddBusStationsToDatabaseAsync(busStations, direction);
+
+                BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService)).ToList();
+            }
         }
 
         private async Task GetLocalBusStationsAsync()

@@ -108,8 +108,6 @@ namespace RATBVFormsPrism.ViewModels
             _busDataService = busDataService;
             _busWebService = busWebService;
             _navigationService = navigationService;
-
-            Init();
         }
         
         #endregion Constructors
@@ -133,18 +131,15 @@ namespace RATBVFormsPrism.ViewModels
 
             await AddBusLinesToDatabaseAsync();
         }
-        
+
         #endregion Commands
 
-        public async void Init()
+        public async override void OnNavigatedTo(NavigationParameters parameters)
         {
             AllBusLines = new List<BusLineModel>();
 
-            using (UserDialogs.Instance.Loading($"Fetching Data... "))
-            {
-                //if (!_connectivityService.IsConnected())
-                //    return;
-
+            //using (UserDialogs.Instance.Loading($"Fetching Data... "))
+            //{
                 // Create tables, if they already exist nothing will happen
                 await _busDataService.CreateAllTablesAsync();
 
@@ -160,7 +155,7 @@ namespace RATBVFormsPrism.ViewModels
                 {
                     await GetLocalBusLinesAsync();
                 }
-            }
+            //}
         }
 
         private async Task GetWebBusLinesAsync()

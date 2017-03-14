@@ -6,6 +6,7 @@ using RATBVFormsPrism.ViewModels;
 using RATBVFormsPrism.Views;
 using Xamarin.Forms.Xaml;
 using Xamarin.Forms;
+using Acr.UserDialogs;
 
 //[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace RATBVFormsPrism

@@ -150,17 +150,11 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Navigation
 
-        public override void OnNavigatedFrom(NavigationParameters parameters)
-        {
-
-        }
-
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
             BusStation = parameters[AppNavigation.BusStation] as BusStationModel;
 
-            using (UserDialogs.Instance.Loading($"Fetching Data... "))
-                await GetBusTimeTableAsync();
+            await GetBusTimeTableAsync();
         }
 
         #endregion Navigation
@@ -180,13 +174,16 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task GetWebBusTimeTableAsync(string schedualLink)
         {
-            List<BusTimeTableModel> busTimetable = await _busWebService.GetBusTimeTableAsync(schedualLink);
+            using (UserDialogs.Instance.Loading($"Fetching Data... "))
+            {
+                List<BusTimeTableModel> busTimetable = await _busWebService.GetBusTimeTableAsync(schedualLink);
 
-            GetTimeTableByTimeOfWeek(busTimetable);
+                GetTimeTableByTimeOfWeek(busTimetable);
 
-            LastUpdated = String.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+                LastUpdated = String.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
 
-            await AddBusStationsToDatabaseAsync(busTimetable);
+                await AddBusStationsToDatabaseAsync(busTimetable);
+            }
         }
 
         private async Task GetLocalBusTimeTableAsync()
