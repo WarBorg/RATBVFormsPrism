@@ -1,17 +1,11 @@
 ﻿using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.Models;
-using RATBVFormsPrism.Services;
-using SQLite.Net;
-using SQLite.Net.Async;
-using SQLite.Net.Interop;
-using SQLiteNetExtensions.Extensions;
-using SQLiteNetExtensionsAsync.Extensions;
+using SQLite;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -56,9 +50,9 @@ namespace RATBVFormsPrism.Services
 
         public async Task DeleteAllTablesAsync()
         {
-            await _asyncConnection.DeleteAllAsync<BusLineModel>();
-            await _asyncConnection.DeleteAllAsync<BusStationModel>();
-            await _asyncConnection.DeleteAllAsync<BusTimeTableModel>();
+            await DeleteAllAsync<BusLineModel>();
+            await DeleteAllAsync<BusStationModel>();
+            await DeleteAllAsync<BusTimeTableModel>();
         }
 
         #endregion Universal
@@ -106,7 +100,7 @@ namespace RATBVFormsPrism.Services
 
         public async Task<int> InsertOrReplaceBusLinesAsync(IEnumerable<BusLineModel> busLines)
         {
-            return await _asyncConnection.InsertOrReplaceAllAsync(busLines);
+            return await InsertOrReplaceAllAsync(busLines);
         }
 
         #endregion Bus Lines
@@ -172,7 +166,7 @@ namespace RATBVFormsPrism.Services
                 }
             }
 
-            return await _asyncConnection.InsertOrReplaceAllAsync(busStations);
+            return await InsertOrReplaceAllAsync(busStations);
         }
 
         #endregion Bus Stations
@@ -231,10 +225,45 @@ namespace RATBVFormsPrism.Services
                 }
             }
 
-            return await _asyncConnection.InsertOrReplaceAllAsync(busTimeTables);
+            return await InsertOrReplaceAllAsync(busTimeTables);
         }
 
         #endregion Bus Time Table
+
+        #region Extensions
+
+        public async Task<int> InsertOrReplaceAllAsync(IEnumerable items, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException("items");
+            }
+
+            var returnItems = 0;
+
+            foreach (var item in items)
+            {
+                await _asyncConnection.InsertOrReplaceAsync(item);
+
+                returnItems++;
+            }
+
+            return returnItems;
+        }
+
+        private Task<int> DeleteAllAsync<T>(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                var conn = _asyncConnection.GetConnection();
+                using (conn.Lock())
+                {
+                    return conn.DeleteAll<T>();
+                }
+            }, cancellationToken, TaskCreationOptions.None, null ?? TaskScheduler.Default);
+        }
+
+        #endregion Extensions
 
         #endregion Methods
     }

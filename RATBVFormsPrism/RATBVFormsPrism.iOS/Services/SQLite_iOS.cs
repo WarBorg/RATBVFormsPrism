@@ -1,20 +1,11 @@
-using Foundation;
-using UIKit;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-using Xamarin.Forms;
-using RATBVFormsPrism.iOS.Services;
 using RATBVFormsPrism.Interfaces;
-using RATBVFormsPrism.Services;
-using SQLite.Net;
-using SQLite.Net.Async;
+using RATBVFormsPrism.iOS.Services;
+using SQLite;
+using System;
+using System.IO;
+using Xamarin.Forms;
 
-[assembly: Dependency (typeof (SQLite_iOS))]
+[assembly: Dependency(typeof(SQLite_iOS))]
 
 namespace RATBVFormsPrism.iOS.Services
 {
@@ -38,9 +29,8 @@ namespace RATBVFormsPrism.iOS.Services
         public SQLiteConnection GetConnection(string databaseName)
         {
             var path = GetPath(databaseName);
-
-            var plat = new SQLite.Net.Platform.XamarinIOS.SQLitePlatformIOS();
-            var conn = new SQLiteConnection(plat, path);
+            
+            var conn = new SQLiteConnection(path);
 
             // Return the database connection 
             return conn;
@@ -50,12 +40,7 @@ namespace RATBVFormsPrism.iOS.Services
         {
             var path = GetPath(databaseName);
 
-            var platform = new SQLite.Net.Platform.XamarinIOS.SQLitePlatformIOS();
-            var connectionParameters = new SQLiteConnectionString(path, false);
-
-            var connectionWithLock = new SQLiteConnectionWithLock(platform, connectionParameters);
-
-            var conn = new SQLiteAsyncConnection(() => connectionWithLock);
+            var conn = new SQLiteAsyncConnection(path);
 
             // Return the database connection 
             return conn;

@@ -13,6 +13,7 @@
     <AssemblyName>RATBVFormsPrismiOS</AssemblyName>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -97,12 +98,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork@2x" />
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RATBVFormsPrism\RATBVFormsPrism.csproj">
-      <Name>RATBVFormsPrism</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -157,6 +152,12 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\TrolleyBus%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RATBVFormsPrism\RATBVFormsPrism.csproj">
+      <Project>{59714e65-bbc1-4d38-85b9-c75a4f722b27}</Project>
+      <Name>RATBVFormsPrism</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

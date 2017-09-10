@@ -1,18 +1,14 @@
-﻿using System;
+﻿using Acr.UserDialogs;
+using Prism.Commands;
+using Prism.Navigation;
+using RATBVFormsPrism.Constants;
+using RATBVFormsPrism.Interfaces;
+using RATBVFormsPrism.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
-
-using Prism.Commands;
-using Prism.Navigation;
 using Xamarin.Forms;
-
-//using RATBVFormsPrism.Core.ViewModels;
-using RATBVFormsPrism.Constants;
-using RATBVFormsPrism.Models;
-using RATBVFormsPrism.Interfaces;
-using Acr.UserDialogs;
 
 namespace RATBVFormsPrism.ViewModels
 {

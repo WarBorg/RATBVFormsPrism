@@ -1,115 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8E74D528-E863-4C77-9DEA-F8D2FB9B5298}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RATBVFormsPrism</RootNamespace>
-    <AssemblyName>RATBVFormsPrism</AssemblyName>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Constants\AppNavigation.cs" />
-    <Compile Include="Constants\BusTypes.cs" />
-    <Compile Include="Constants\RouteDirections.cs" />
-    <Compile Include="Constants\TimeOfTheWeek.cs" />
-    <Compile Include="Interfaces\IBusDataService.cs" />
-    <Compile Include="Interfaces\IBusWebService.cs" />
-    <Compile Include="Interfaces\ISQLite.cs" />
-    <Compile Include="Models\BusLineModel.cs" />
-    <Compile Include="Models\BusStationModel.cs" />
-    <Compile Include="Models\BusTimeTableModel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\BusDataService.cs" />
-    <Compile Include="Services\BusWebService.cs" />
-    <Compile Include="ViewModels\BusLinesViewModel.cs" />
-    <Compile Include="ViewModels\BusLineViewModel.cs" />
-    <Compile Include="ViewModels\BusStationsViewModel.cs" />
-    <Compile Include="ViewModels\BusStationViewModel.cs" />
-    <Compile Include="ViewModels\BusTimeTableViewModel.cs" />
-    <Compile Include="ViewModels\BusViewModelBase.cs" />
-    <Compile Include="Views\RATBVNavigation.xaml.cs">
-      <DependentUpon>RATBVNavigation.xaml</DependentUpon>
-    </Compile>
+    <None Remove="App.xaml" />
+    <None Remove="Views\BusLines.xaml" />
+    <None Remove="Views\BusStations.xaml" />
+    <None Remove="Views\BusTimeTable.xaml" />
+    <None Remove="Views\RATBVNavigation.xaml" />
   </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Views\RATBVNavigation.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Views\BusLines.xaml" />
+    <EmbeddedResource Include="Views\BusStations.xaml" />
+    <EmbeddedResource Include="Views\BusTimeTable.xaml" />
+    <EmbeddedResource Include="Views\RATBVNavigation.xaml" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Views\BusLines.xaml.cs">
-      <DependentUpon>BusLines.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\BusStations.xaml.cs">
-      <DependentUpon>BusStations.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\BusTimeTable.xaml.cs">
-      <DependentUpon>BusTimeTable.xaml</DependentUpon>
-    </Compile>
+    <PackageReference Include="Acr.UserDialogs" Version="6.3.5" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.5.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Prism.Core" Version="6.3.0" />
+    <PackageReference Include="Prism.Forms" Version="6.3.0" />
+    <PackageReference Include="Prism.Unity.Forms" Version="6.3.0" />
+    <PackageReference Include="SQLiteNetExtensions-netstandard" Version="2.0.0-alpha3" />
+    <PackageReference Include="Unity" Version="4.0.1" />
+    <PackageReference Include="Xam.Plugin.Connectivity" Version="3.0.2" />
+    <PackageReference Include="Xamarin.Forms" Version="2.4.0.269-pre2" />
   </ItemGroup>
+
   <ItemGroup>
+    <Compile Update="App.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Views\BusLines.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\BusStations.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\BusTimeTable.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

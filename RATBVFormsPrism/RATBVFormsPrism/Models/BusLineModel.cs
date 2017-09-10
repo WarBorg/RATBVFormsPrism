@@ -1,10 +1,6 @@
-﻿using SQLite.Net.Attributes;
+﻿using SQLite;
 using SQLiteNetExtensions.Attributes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RATBVFormsPrism.Models
 {

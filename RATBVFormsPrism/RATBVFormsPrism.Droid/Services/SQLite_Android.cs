@@ -13,11 +13,10 @@ using Android.Widget;
 
 using RATBVFormsPrism.Droid.Services;
 
-using SQLite.Net;
+using SQLite;
 using Xamarin.Forms;
 using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.Services;
-using SQLite.Net.Async;
 
 [assembly: Dependency (typeof (SQLite_Android))]
 
@@ -43,8 +42,7 @@ namespace RATBVFormsPrism.Droid.Services
         {
             var path = GetPath(databaseName);
 
-            var plat = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
-            var conn = new SQLiteConnection(plat, path);
+            var conn = new SQLiteConnection(path);
 
             // Return the database connection 
             return conn;
@@ -54,12 +52,7 @@ namespace RATBVFormsPrism.Droid.Services
         {
             var path = GetPath(databaseName);
 
-            var platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
-            var connectionParameters = new SQLiteConnectionString(path, false);
-
-            var connectionWithLock = new SQLiteConnectionWithLock(platform, connectionParameters);
-
-            var conn = new SQLiteAsyncConnection(() => connectionWithLock);
+            var conn = new SQLiteAsyncConnection(path);
 
             // Return the database connection 
             return conn;
