@@ -8,37 +8,20 @@
     <None Remove="App.xaml" />
     <None Remove="Views\BusLines.xaml" />
     <None Remove="Views\BusStations.xaml" />
-    <None Remove="Views\BusTimeTable.xaml" />
     <None Remove="Views\RATBVNavigation.xaml" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="App.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\BusLines.xaml" />
-    <EmbeddedResource Include="Views\BusStations.xaml" />
-    <EmbeddedResource Include="Views\BusTimeTable.xaml" />
-    <EmbeddedResource Include="Views\RATBVNavigation.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Acr.UserDialogs" Version="6.3.9" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.5.5" />
+    <PackageReference Include="Acr.UserDialogs" Version="6.5.1" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.6.11" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Prism.Core" Version="6.3.0" />
     <PackageReference Include="Prism.Forms" Version="6.3.0" />
     <PackageReference Include="Prism.Unity.Forms" Version="6.3.0" />
     <PackageReference Include="SQLiteNetExtensions-netstandard" Version="2.0.0-alpha3" />
     <PackageReference Include="Unity" Version="4.0.1" />
-    <PackageReference Include="Xam.Plugin.Connectivity" Version="3.0.2" />
-    <PackageReference Include="Xamarin.Forms" Version="2.4.0.269-pre2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="App.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <PackageReference Include="Xam.Plugin.Connectivity" Version="3.0.3" />
+    <PackageReference Include="Xamarin.Forms" Version="2.5.0.121934" />
   </ItemGroup>
 
 </Project>
