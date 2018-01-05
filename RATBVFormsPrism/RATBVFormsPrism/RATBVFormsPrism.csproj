@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Acr.UserDialogs" Version="6.3.5" />
+    <PackageReference Include="Acr.UserDialogs" Version="6.3.9" />
     <PackageReference Include="HtmlAgilityPack" Version="1.5.5" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Prism.Core" Version="6.3.0" />

@@ -77,7 +77,7 @@ namespace RATBVFormsPrism.ViewModels
         {
             get
             {
-                if (Device.OS == TargetPlatform.WinPhone)
+                if (Device.RuntimePlatform == Device.WinPhone)
                     return $"Bus Stations - Updated on {LastUpdated}";
 
                 return "Bus Stations";
@@ -90,7 +90,7 @@ namespace RATBVFormsPrism.ViewModels
             set
             {
                 SetProperty(ref _lastUpdated, value);
-                OnPropertyChanged(() => Title);
+                RaisePropertyChanged(nameof(Title));
             }
         }
 

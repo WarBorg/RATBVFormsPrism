@@ -245,3 +245,6 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 /RATBVFormsPrism/RATBVFormsPrism.WinPhone.rar
+/.idea/.idea.RATBVFormsPrism
+*.DS_Store
+*.bak
