@@ -2,17 +2,13 @@
 using RATBVFormsPrism.Constants;
 using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.Models;
-using RATBVFormsPrism.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace RATBVFormsPrism.Services
 {
@@ -72,18 +68,7 @@ namespace RATBVFormsPrism.Services
                             .Replace("&acirc;", "â");
 
                         string linkNormalWay = items[i].Descendants("a").FirstOrDefault().Attributes["href"].Value;
-                        string linkReverseWay = string.Empty;
-                        
-                        // Check if is in new format or not
-                        if (linkNormalWay.Contains("dus")) // Old format
-                        {
-                            linkReverseWay = linkNormalWay.Replace("dus", "intors");
-                        }
-                        else // New Format
-                        {
-                            linkNormalWay += "timetable/";
-                            linkReverseWay = linkNormalWay.Replace("tour", "retour");
-                        }
+                        string linkReverseWay = linkNormalWay.Replace("dus", "intors");
 
                         CleanUpBusLinesText(ref line, ref route, ref type, i, str);
 
@@ -141,74 +126,16 @@ namespace RATBVFormsPrism.Services
                 type = BusTypes.Trolleybus;
         }
 
-        private async Task<string> GetBusMainDisplayAsync(string lineNumberLink, bool IsStationRequest)
-        {
-            try
-            {
-                string url = String.Format("{0}{1}", "http://www.ratbv.ro", lineNumberLink);
-
-                var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
-
-                var response = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
-
-                Stream responseStream = response.GetResponseStream();
-
-                HtmlDocument doc = new HtmlDocument();
-
-                doc.Load(response.GetResponseStream());
-
-                if (IsStationRequest)
-                {
-                    HtmlNode frameStations = doc.DocumentNode
-                            .Descendants("frame")
-                            .Where(x => x.Attributes.Contains("name") &&
-                                        x.Attributes.Contains("noresize") &&
-                                        x.Attributes["name"].Value.Equals("frTabs") &&
-                                        x.Attributes["noresize"].Value.Equals("noresize"))
-                            .SingleOrDefault();
-
-                    return frameStations.Attributes["src"].Value;
-                }
-                else
-                {
-                    HtmlNode frameSchedual = doc.DocumentNode
-                            .Descendants("frame")
-                            .Where(x => x.Attributes.Contains("name") &&
-                                        x.Attributes["name"].Value.Equals("MainFrame"))
-                            .SingleOrDefault();
-
-                    return frameSchedual.Attributes["src"].Value;
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         #endregion Bus Lines
 
         #region Bus Stations
 
         public async Task<List<BusStationModel>> GetBusStationsAsync(string lineNumberLink)
-        {
-            var lineNumberStationsLink = string.Empty;
-
+        {   
             var busStations = new List<BusStationModel>();
 
-            if (lineNumberLink.Contains("dus") || lineNumberLink.Contains("intors")) // Old format
-            {
-                lineNumberStationsLink = await GetBusMainDisplayAsync(lineNumberLink, true);
+            var lineNumberStationsLink = await GetBusMainDisplayAsync(lineNumberLink, true);
 
-                return await GetBusStationsAsyncOld(lineNumberStationsLink, busStations);
-            }
-
-            // New format
-            return await GetBusStationsAsyncNew(lineNumberLink, busStations);
-        }
-
-        private async Task<List<BusStationModel>> GetBusStationsAsyncOld(string lineNumberStationsLink, List<BusStationModel> busStations)
-        {   
             var url = string.Format("{0}{1}", "http://www.ratbv.ro/afisaje/", lineNumberStationsLink);
 
             var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
@@ -268,43 +195,49 @@ namespace RATBVFormsPrism.Services
             return busStations;
         }
 
-        private async Task<List<BusStationModel>> GetBusStationsAsyncNew(string lineNumberStationsLink, List<BusStationModel> busStations)
+        private async Task<string> GetBusMainDisplayAsync(string lineNumberLink, bool IsStationRequest)
         {
-            string url = String.Format("{0}{1}", "http://www.ratbv.ro", lineNumberStationsLink);
-
-            var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
-
-            var response = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
-
-            Stream responseStream = response.GetResponseStream();
-
-            HtmlDocument doc = new HtmlDocument();
-
-            doc.Load(response.GetResponseStream());
-
-            var divStations = doc.DocumentNode
-                .Descendants("div")
-                .Where(x => x.Attributes.Contains("class") &&
-                            x.Attributes["class"].Value.Contains("box butoane-statii"))
-                .SingleOrDefault();
-
-            var stations = divStations
-                .Descendants("a")
-                .ToList();
-
-            foreach (HtmlNode station in stations)
+            try
             {
-                string stationName = station.InnerText.Trim();
-                string fullSchedualLink = station.Attributes["href"].Value;
+                string url = String.Format("{0}{1}", "http://www.ratbv.ro", lineNumberLink);
 
-                busStations.Add(new BusStationModel
+                var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+
+                var response = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
+
+                Stream responseStream = response.GetResponseStream();
+
+                HtmlDocument doc = new HtmlDocument();
+
+                doc.Load(response.GetResponseStream());
+
+                if (IsStationRequest)
                 {
-                    Name = stationName,
-                    SchedualLink = fullSchedualLink
-                });
-            }
+                    HtmlNode frameStations = doc.DocumentNode
+                            .Descendants("frame")
+                            .Where(x => x.Attributes.Contains("name") &&
+                                        x.Attributes.Contains("noresize") &&
+                                        x.Attributes["name"].Value.Equals("frTabs") &&
+                                        x.Attributes["noresize"].Value.Equals("noresize"))
+                            .SingleOrDefault();
 
-            return busStations;
+                    return frameStations.Attributes["src"].Value;
+                }
+                else
+                {
+                    HtmlNode frameSchedual = doc.DocumentNode
+                            .Descendants("frame")
+                            .Where(x => x.Attributes.Contains("name") &&
+                                        x.Attributes["name"].Value.Equals("MainFrame"))
+                            .SingleOrDefault();
+
+                    return frameSchedual.Attributes["src"].Value;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         #endregion Bus Stations
@@ -315,14 +248,6 @@ namespace RATBVFormsPrism.Services
         {
             var busTimeTable = new List<BusTimeTableModel>();
 
-            if (schedualLink.Contains("dus") || schedualLink.Contains("intors"))
-                return await GetBusTimeTableAsyncOld(schedualLink, busTimeTable);
-
-            return await GetBusTimeTableAsyncNew(schedualLink, busTimeTable);
-        }
-
-        private async Task<List<BusTimeTableModel>> GetBusTimeTableAsyncOld(string schedualLink, List<BusTimeTableModel> busTimeTable)
-        {
             string url = String.Format("{0}{1}", "http://www.ratbv.ro/afisaje/", schedualLink);
 
             var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
@@ -365,7 +290,7 @@ namespace RATBVFormsPrism.Services
                         minutes += " " + minuteNode.InnerText.Trim();
                 }
 
-                if (string.IsNullOrEmpty(hour) && string.IsNullOrEmpty(minutes))
+                if (!string.IsNullOrEmpty(hour) && !string.IsNullOrEmpty(minutes))
                 {
                     busTimeTable.Add(new BusTimeTableModel
                     {
@@ -377,88 +302,6 @@ namespace RATBVFormsPrism.Services
                     hour = minutes = string.Empty;
                 }
             }
-        }
-
-        private async Task<List<BusTimeTableModel>> GetBusTimeTableAsyncNew(string schedualLink, List<BusTimeTableModel> busTimeTable)
-        {
-            string url = String.Format("{0}{1}", "http://www.ratbv.ro", schedualLink);
-
-            var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
-
-            var response = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
-
-            Stream responseStream = response.GetResponseStream();
-
-            HtmlDocument doc = new HtmlDocument();
-
-            doc.Load(response.GetResponseStream());
-
-            var tableSchedual = doc.DocumentNode
-                .Descendants("div")
-                .Where(x => x.Attributes.Contains("class") &&
-                            x.Attributes["class"].Value.Contains("box tabel-statii"))
-                .SingleOrDefault()
-                .Descendants("table")
-                .SingleOrDefault();
-
-            foreach (HtmlNode hourLine in tableSchedual.Descendants("tr").Skip(1))
-            {
-                var hourLineDetails = hourLine.Descendants("td").ToList();
-
-                // Skip the lines that don't have a schedule in them
-                if (hourLineDetails.Count < 5)
-                    continue;
-
-                string hour = hourLineDetails[0].InnerText.Replace('\n', ' ').Replace(" ", String.Empty).Replace("&nbsp;", " ").Trim();
-                string minutesWeekdays = hourLineDetails[1].InnerText.Replace('\n', ' ').Replace(" ", String.Empty).Replace("&nbsp;", " ").Trim();
-                string minutesSaturday = hourLineDetails[2].InnerText.Replace('\n', ' ').Replace(" ", String.Empty).Replace("&nbsp;", " ").Trim();
-                string minutesSunday = hourLineDetails[3].InnerText.Replace('\n', ' ').Replace(" ", String.Empty).Replace("&nbsp;", " ").Trim();
-                string minutesSummerHoliday = hourLineDetails[4].InnerText.Replace('\n', ' ').Replace(" ", String.Empty).Replace("&nbsp;", " ").Trim();
-
-                if (hour != String.Empty && minutesWeekdays != String.Empty)
-                {
-                    busTimeTable.Add(new BusTimeTableModel
-                    {
-                        Hour = hour,
-                        Minutes = minutesWeekdays,
-                        TimeOfWeek = TimeOfTheWeek.WeekDays
-                    });
-                }
-
-                if (hour != String.Empty && minutesSaturday != String.Empty)
-                {
-                    busTimeTable.Add(new BusTimeTableModel
-                    {
-                        Hour = hour,
-                        Minutes = minutesSaturday,
-                        TimeOfWeek = TimeOfTheWeek.Saturday
-                    });
-                }
-
-                if (hour != String.Empty && minutesSunday != String.Empty)
-                {
-                    busTimeTable.Add(new BusTimeTableModel
-                    {
-                        Hour = hour,
-                        Minutes = minutesSunday,
-                        TimeOfWeek = TimeOfTheWeek.Sunday
-                    });
-                }
-
-                if (hour != String.Empty && minutesSummerHoliday != String.Empty)
-                {
-                    busTimeTable.Add(new BusTimeTableModel
-                    {
-                        Hour = hour,
-                        Minutes = minutesSummerHoliday,
-                        TimeOfWeek = TimeOfTheWeek.WeekDaysHoliday
-                    });
-                }
-
-                hour = minutesWeekdays = minutesSaturday = minutesSunday = minutesSummerHoliday = String.Empty;
-            }
-
-            return busTimeTable;
         }
 
         #endregion Bus Time Table
