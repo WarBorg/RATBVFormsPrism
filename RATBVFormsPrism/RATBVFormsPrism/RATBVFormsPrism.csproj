@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove=".DS_Store" />
     <None Remove="App.xaml" />
     <None Remove="Views\BusLines.xaml" />
     <None Remove="Views\BusStations.xaml" />
