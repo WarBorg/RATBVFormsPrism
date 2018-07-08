@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="14" package="ro.warborg.ratbv_prism" android:versionName="1.4">
-	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="25" />
+	<uses-sdk android:minSdkVersion="21" />
 	<application android:label="RATBVFormsPrism" android:theme="@style/MyTheme"></application>
 </manifest>

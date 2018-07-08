@@ -77,7 +77,7 @@ namespace RATBVFormsPrism.ViewModels
         {
             get
             {
-                if (Device.RuntimePlatform == Device.WinPhone)
+                if (Device.RuntimePlatform == Device.UWP)
                     return $"Bus Stations - Updated on {LastUpdated}";
 
                 return "Bus Stations";

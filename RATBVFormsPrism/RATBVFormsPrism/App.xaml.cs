@@ -1,10 +1,11 @@
-﻿using Microsoft.Practices.Unity;
+﻿using Prism.Ioc;
 using Prism.Unity;
 using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.Services;
 using RATBVFormsPrism.Views;
+using Xamarin.Forms.Xaml;
 
-//[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
+[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace RATBVFormsPrism
 {
     public partial class App : PrismApplication
@@ -16,22 +17,20 @@ namespace RATBVFormsPrism
             await NavigationService.NavigateAsync($"{nameof(RATBVNavigation)}/{nameof(BusLines)}");
         }
 
-        protected override void RegisterTypes()
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            Container.RegisterTypeForNavigation<RATBVNavigation>();
-            Container.RegisterTypeForNavigation<BusLines>();
-            Container.RegisterTypeForNavigation<BusStations>();
-            //Container.RegisterTypeForNavigation<BusStations, BusStationsViewModel>();
-            Container.RegisterTypeForNavigation<BusTimeTable>();
-            //Container.RegisterTypeForNavigation<BusTimeTable, BusTimeTableViewModel>();
+            containerRegistry.RegisterForNavigation<RATBVNavigation>();
+            containerRegistry.RegisterForNavigation<BusLines>();
+            containerRegistry.RegisterForNavigation<BusStations>();
+            containerRegistry.RegisterForNavigation<BusTimeTable>();
         }
 
-        protected override void ConfigureContainer()
+        protected override void RegisterRequiredTypes(IContainerRegistry containerRegistry)
         {
-            Container.RegisterType<IBusDataService, BusDataService>();
-            Container.RegisterType<IBusWebService, BusWebService>();
+            containerRegistry.Register<IBusDataService, BusDataService>();
+            containerRegistry.Register<IBusWebService, BusWebService>();
 
-            base.ConfigureContainer();
+            base.RegisterRequiredTypes(containerRegistry);
         }
 
         protected override void OnStart()
