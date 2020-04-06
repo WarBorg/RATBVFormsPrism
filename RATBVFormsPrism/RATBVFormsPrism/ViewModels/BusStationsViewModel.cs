@@ -15,78 +15,68 @@ namespace RATBVFormsPrism.ViewModels
 {
     public class BusStationsViewModel : BusViewModelBase
     {
-        #region Members
+        #region Dependencies
 
         private readonly INavigationService _navigationService;
         private readonly IBusDataService _busDataService;
         private readonly IBusWebService _busWebService;
 
-        private string _direction = string.Empty;
+        #endregion
+
+        #region Fields
+
         private string _linkDirection = string.Empty;
 
-        private BusLineModel _busLine;
-
-        private List<BusStationViewModel> _busStations;
-
-        private string _busLineName = "Linia";
-        private string _lastUpdated = "never";
-
-        private bool _isBusy;
-
-        private DelegateCommand _reverseCommand;
-        private DelegateCommand _refreshCommand;
-        private DelegateCommand _downloadCommand;
-
-        #endregion Members
+        #endregion
 
         #region Properties
 
+        private BusLineModel _busLine;
         public BusLineModel BusLine
         {
-            get { return _busLine; }
-            set 
-            { 
-                SetProperty(ref _busLine, value);
-                //BusLineName = value == null ? string.Empty : $"{value.Name} - {Direction}");
-            }
+            get => _busLine;
+            set => SetProperty(ref _busLine, value);
         }
 
+        private string _direction = string.Empty;
         public string Direction
         {
-            get { return _direction; }
-            set 
-            { 
+            get => _direction;
+            set
+            {
                 SetProperty(ref _direction, value);
-                BusLineName = BusLine == null ? string.Empty : $"{BusLine.Name} - {value}";
+
+                BusLineName = BusLine == null
+                                       ? string.Empty
+                                       : $"{BusLine.Name} - {value}";
             }
         }
 
+        private string _busLineName = "Linia";
         public string BusLineName
         {
-            get { return _busLineName; }
-            set { SetProperty(ref _busLineName, value); }
+            get => _busLineName;
+            set => SetProperty(ref _busLineName, value);
         }
 
+        private List<BusStationViewModel> _busStations;
         public List<BusStationViewModel> BusStations
         {
-            get { return _busStations; }
-            set { SetProperty(ref _busStations, value); }
+            get => _busStations;
+            set => SetProperty(ref _busStations, value);
         }
 
         public override string Title
         {
-            get
-            {
-                if (Device.RuntimePlatform == Device.UWP)
-                    return $"Bus Stations - Updated on {LastUpdated}";
-
-                return "Bus Stations";
-            }
+            get => Device.RuntimePlatform == Device.UWP
+                                           ? $"Bus Stations - Updated on {LastUpdated}"
+                                           : "Bus Stations";
         }
 
+        private string _lastUpdated = "never";
         public string LastUpdated
         {
-            get { return _lastUpdated; }
+            get => _lastUpdated;
             set
             {
                 SetProperty(ref _lastUpdated, value);
@@ -94,69 +84,72 @@ namespace RATBVFormsPrism.ViewModels
             }
         }
 
+        private bool _isBusy;
         public bool IsBusy
         {
-            get { return _isBusy; }
-            set { SetProperty(ref _isBusy, value); }
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
         }
 
-        #region Commands
+        #endregion
 
+        #region Command Properties
+
+        private DelegateCommand _reverseCommand;
         public ICommand ReverseCommand
         {
             get
             {
-                _reverseCommand = _reverseCommand ?? new DelegateCommand(DoReverseCommand);
+                _reverseCommand ??= new DelegateCommand(DoReverseCommand);
                 return _reverseCommand;
             }
         }
 
+        private DelegateCommand _downloadCommand;
         public ICommand DownloadCommand
         {
             get
             {
-                _downloadCommand = _downloadCommand ?? new DelegateCommand(DoDownloadCommand);
+                _downloadCommand ??= new DelegateCommand(DoDownloadCommand);
                 return _downloadCommand;
             }
         }
 
+        private DelegateCommand _refreshCommand;
         public ICommand RefreshCommand
         {
             get
             {
-                _refreshCommand = _refreshCommand ?? new DelegateCommand(DoRefreshCommand, () => { return !IsBusy; });
+                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => { return !IsBusy; });
                 return _refreshCommand;
             }
         }
 
-        #endregion Commands
-
-        #endregion Properties
+        #endregion
 
         #region Constructors
 
-        public BusStationsViewModel(IBusDataService busDataService, IBusWebService busWebService, INavigationService navigationService)
+        public BusStationsViewModel(IBusDataService busDataService,
+                                    IBusWebService busWebService,
+                                    INavigationService navigationService)
         {
             _busDataService = busDataService;
             _busWebService = busWebService;
             _navigationService = navigationService;
         }
-        
+
         #endregion Constructors
 
-        #region Methods
+        #region Command Methods
 
-        #region Commands
-
-        private async void DoReverseCommand()
-        {
-            await GetBusStationsAsync(false, true);
-        }
+        private async void DoReverseCommand() => await GetBusStationsAsync(false, true);
 
         private async void DoRefreshCommand()
         {
             if (IsBusy)
+            {
                 return;
+            }
 
             IsBusy = true;
             _refreshCommand.RaiseCanExecuteChanged();
@@ -169,17 +162,19 @@ namespace RATBVFormsPrism.ViewModels
 
         private async void DoDownloadCommand()
         {
-            if (!IsInternetAvailable())
+            if (!IsInternetAvailable)
+            {
                 return;
+            }
 
             await DownloadAllStationsSchedualsAsync();
 
             UserDialogs.Instance.Toast("Download complete for all bus stations");
         }
         
-        #endregion Commands
+        #endregion
 
-        #region Navigation
+        #region Navigation Methods
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
@@ -189,12 +184,16 @@ namespace RATBVFormsPrism.ViewModels
             await GetBusStationsAsync();
         }
 
-        #endregion Navigation
+        #endregion
+
+        #region Methods
 
         private async Task GetBusStationsAsync(bool isRefresh = false, bool isReverse = false)
         {
             if (BusLine == null)
+            {
                 return;
+            }
 
             if (!isRefresh)
             {
@@ -222,41 +221,54 @@ namespace RATBVFormsPrism.ViewModels
             var busStationsCount = await _busDataService.CountBusStationsAsync(BusLine.Id, Direction);
 
             if (isRefresh || (busStationsCount == 0))
+            {
                 await GetWebBusStationsAsync(_linkDirection, Direction);
+            }
             else
+            {
                 await GetLocalBusStationsAsync();
+            }
         }
 
         private async Task GetWebBusStationsAsync(string linkDirection, string direction)
         {
-            if (!IsInternetAvailable())
+            if (!IsInternetAvailable)
+            {
                 return;
+            }
 
             using (UserDialogs.Instance.Loading($"Fetching Data... "))
             {
-                List<BusStationModel> busStations = await _busWebService.GetBusStationsAsync(linkDirection);
+                var busStations = await _busWebService.GetBusStationsAsync(linkDirection);
 
                 if (busStations == null)
+                {
                     return;
+                }
 
-                LastUpdated = String.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+                LastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
 
                 await AddBusStationsToDatabaseAsync(busStations, direction);
 
-                BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService)).ToList();
+                BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService))
+                                         .ToList();
             }
         }
 
         private async Task GetLocalBusStationsAsync()
         {
-            List<BusStationModel> busStations = await _busDataService.GetBusStationsByNameAsync(BusLine.Id, Direction);
+            var busStations = await _busDataService.GetBusStationsByNameAsync(BusLine.Id, Direction);
 
             if (busStations == null)
+            {
                 return;
+            }
 
-            BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService)).ToList();
+            BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService))
+                                     .ToList();
 
-            LastUpdated = busStations.FirstOrDefault().LastUpdateDate;
+            LastUpdated = busStations.FirstOrDefault()
+                                     .LastUpdateDate;
         }
 
         private async Task AddBusStationsToDatabaseAsync(List<BusStationModel> busStations, string direction)
@@ -274,10 +286,12 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task DownloadAllStationsSchedualsAsync()
         {
-            if (!IsInternetAvailable())
+            if (!IsInternetAvailable)
+            {
                 return;
+            }
 
-            var lastUpdatedTimeTable = String.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+            var lastUpdatedTimeTable = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
 
             foreach (var busStation in BusStations)
             {
@@ -294,6 +308,6 @@ namespace RATBVFormsPrism.ViewModels
             }
         }
 
-        #endregion Methods
+        #endregion
     }
 }

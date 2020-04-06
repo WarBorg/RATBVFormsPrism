@@ -21,10 +21,12 @@ namespace RATBVFormsPrism.Services
 
         public BusWebService()
         {
-            const string IOSAddress = "https://localhost:5001/api";
-            const string AndroidAddress = "https://10.0.2.2:5001/api";
+            const string IOSBaseAddress = "https://localhost:5001/api";
+            const string AndroidBaseAddress = "https://10.0.2.2:5001/api";
                                                     
-            string baseAddress = DeviceInfo.Platform == DevicePlatform.Android ? AndroidAddress : IOSAddress;
+            string baseAddress = DeviceInfo.Platform == DevicePlatform.Android
+                                                      ? AndroidBaseAddress
+                                                      : IOSBaseAddress;
 
             var httpClient = new HttpClient(GetInsecureHandler())
             {
@@ -39,6 +41,10 @@ namespace RATBVFormsPrism.Services
 
         #region Methods
 
+        /// <summary>
+        /// Method to get passed the SSL problem when debugging locally
+        /// </summary>
+        /// <returns>HTTP Handler that bypasses SSL verification</returns>
         private HttpClientHandler GetInsecureHandler()
         {
             return new HttpClientHandler

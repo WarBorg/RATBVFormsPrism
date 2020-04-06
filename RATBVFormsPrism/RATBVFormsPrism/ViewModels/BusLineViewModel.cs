@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using System.Windows.Input;
+using Prism.Commands;
 using Prism.Navigation;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
@@ -8,47 +9,53 @@ namespace RATBVFormsPrism.ViewModels
 {
     public class BusLineViewModel : BusViewModelBase
     {
-        #region Members
+        #region Dependencies
 
         private readonly INavigationService _navigationService;
 
+        #endregion
+
+        #region Fields
+
         private readonly BusLineModel _busLine;
 
-        #endregion Members
+        #endregion
 
         #region Properties
 
         public string Name { get; set; }
         public string Route { get; set; }
 
-        #region Commands
+        #endregion
 
-        public DelegateCommand ShowSelectedBusLineStationsCommand
+        #region Command Properties
+
+        public ICommand ShowSelectedBusLineStationsCommand
         {
             get
             {
                 return new DelegateCommand(async () =>
                 {
-                    if (IsInternetAvailable())
+                    if (IsInternetAvailable)
                     {
-                        var parameters = new NavigationParameters();
-                        parameters.Add(AppNavigation.BusLine, _busLine);
+                        var parameters = new NavigationParameters
+                        {
+                            { AppNavigation.BusLine, _busLine }
+                        };
 
                         //await _navigationService.Navigate($"{nameof(RATBVNavigation)}/{nameof(BusLines)}/{nameof(BusStations)}", parameters);
-                        //await _navigationService.NavigateAsync<BusStationsViewModel>(parameters);
                         await _navigationService.NavigateAsync(nameof(BusStations), parameters);
                     }
                 });
             }
         }
 
-        #endregion Commands
-
-        #endregion Properties
+        #endregion
 
         #region Constructors
 
-        public BusLineViewModel(BusLineModel busLine, INavigationService navigationService)
+        public BusLineViewModel(BusLineModel busLine,
+                                INavigationService navigationService)
         {
             _busLine = busLine;
             _navigationService = navigationService;
@@ -57,6 +64,6 @@ namespace RATBVFormsPrism.ViewModels
             Route = _busLine.Route;
         }
         
-        #endregion Constructors
+        #endregion
     }
 }

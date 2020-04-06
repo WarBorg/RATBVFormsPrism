@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Acr.UserDialogs;
 using Prism.Commands;
 using Prism.Navigation;
 using RATBVData.Models.Enums;
 using RATBVData.Models.Models;
-using RATBVFormsPrism.Constants;
 using RATBVFormsPrism.Interfaces;
 using Xamarin.Forms;
 
@@ -14,57 +15,47 @@ namespace RATBVFormsPrism.ViewModels
 {
     public class BusLinesViewModel : BusViewModelBase
     {
-        #region Members
+        #region Dependencies
 
         private readonly INavigationService _navigationService;
         private readonly IBusDataService _busDataService;
         private readonly IBusWebService _busWebService;
 
-        private List<BusLineViewModel> _busLines;
-        private List<BusLineViewModel> _midiBusLines;
-        private List<BusLineViewModel> _trolleybusLines;
-
-        private string _lastUpdated = "never";
-
-        private bool _isBusy;
-
-        private DelegateCommand _refreshCommand;
-
-        #endregion Members
+        #endregion
 
         #region Properties
 
         public List<BusLineModel> AllBusLines { get; private set; }
         
+        private List<BusLineViewModel> _busLines;
         public List<BusLineViewModel> BusLines
         {
-            get { return _busLines; }
-            set { SetProperty(ref _busLines, value); }
+            get => _busLines;
+            set => SetProperty(ref _busLines, value);
         }
 
+        private List<BusLineViewModel> _midiBusLines;
         public List<BusLineViewModel> MidiBusLines
         {
-            get { return _midiBusLines; }
-            set { SetProperty(ref _midiBusLines, value); }
+            get => _midiBusLines;
+            set => SetProperty(ref _midiBusLines, value);
         }
 
+        private List<BusLineViewModel> _trolleybusLines;
         public List<BusLineViewModel> TrolleybusLines
         {
-            get { return _trolleybusLines; }
-            set { SetProperty(ref _trolleybusLines, value); }
+            get => _trolleybusLines;
+            set => SetProperty(ref _trolleybusLines, value);
         }
 
         public override string Title
         {
-            get
-            {
-                if (Device.RuntimePlatform == Device.UWP)
-                    return String.Format("Bus Lines - Updated on {0}", LastUpdated);
-
-                return "Bus Lines";
-            }
+            get => Device.RuntimePlatform == Device.UWP
+                                           ? $"Bus Lines - Updated on {LastUpdated}"
+                                           : "Bus Lines";
         }
 
+        private string _lastUpdated = "never";
         public string LastUpdated
         {
             get => _lastUpdated;
@@ -75,46 +66,50 @@ namespace RATBVFormsPrism.ViewModels
             }
         }
 
+        private bool _isBusy;
         public bool IsBusy
         {
-            get { return _isBusy; }
-            set { SetProperty(ref _isBusy, value); }
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
         }
 
-        #region Commands
+        #endregion
 
-        public DelegateCommand RefreshCommand
+        #region Command Properties
+
+        private DelegateCommand _refreshCommand;
+        public ICommand RefreshCommand
         {
             get
             {
-                _refreshCommand = _refreshCommand ?? new DelegateCommand(DoRefreshCommand, () => { return !IsBusy; });
+                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => { return !IsBusy; });
                 return _refreshCommand;
             }
         }
 
-        #endregion Commands
-
-        #endregion Properties
+        #endregion
 
         #region Constructors
 
-        public BusLinesViewModel(IBusDataService busDataService, IBusWebService busWebService, INavigationService navigationService)
+        public BusLinesViewModel(IBusDataService busDataService,
+                                 IBusWebService busWebService,
+                                 INavigationService navigationService)
         {
             _busDataService = busDataService;
             _busWebService = busWebService;
             _navigationService = navigationService;
         }
         
-        #endregion Constructors
+        #endregion
 
-        #region Methods
-
-        #region Commands
+        #region Command Methods
 
         private async void DoRefreshCommand()
         {
             if (IsBusy)
+            {
                 return;
+            }
 
             IsBusy = true;
             _refreshCommand.RaiseCanExecuteChanged();
@@ -127,12 +122,15 @@ namespace RATBVFormsPrism.ViewModels
             await AddBusLinesToDatabaseAsync();
         }
 
-        #endregion Commands
+        #endregion
+
+        #region Methods
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
             AllBusLines = new List<BusLineModel>();
 
+            // ERROR Object not set to an instance of an object :|
             //using (UserDialogs.Instance.Loading($"Fetching Data... "))
             //{
                 // Create tables, if they already exist nothing will happen
@@ -155,8 +153,10 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task GetWebBusLinesAsync()
         {
-            if (!IsInternetAvailable())
+            if (!IsInternetAvailable)
+            {
                 return;
+            }
 
             AllBusLines = await _busWebService.GetBusLinesAsync();
 
@@ -171,7 +171,8 @@ namespace RATBVFormsPrism.ViewModels
 
             GetBusLinesByType();
 
-            LastUpdated = AllBusLines.FirstOrDefault().LastUpdateDate;
+            LastUpdated = AllBusLines.FirstOrDefault()
+                                     .LastUpdateDate;
         }
 
         private void GetBusLinesByType()
@@ -190,12 +191,13 @@ namespace RATBVFormsPrism.ViewModels
         private async Task AddBusLinesToDatabaseAsync()
         {
             foreach (var busLine in AllBusLines)
+            {
                 busLine.LastUpdateDate = LastUpdated;
+            }
 
             await _busDataService.InsertOrReplaceBusLinesAsync(AllBusLines);
         }
 
-        #endregion Methods
-
+        #endregion
     }
 }

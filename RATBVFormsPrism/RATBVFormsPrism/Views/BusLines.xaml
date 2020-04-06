@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-            xmlns:local="clr-namespace:RATBVFormsPrism.Controls;assembly=RATBVFormsPrism"
             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
             prism:ViewModelLocator.AutowireViewModel="True"
             x:Class="RATBVFormsPrism.Views.BusLines"
@@ -42,8 +41,7 @@
         <ViewCell>
               <StackLayout Orientation="Vertical">
                 <StackLayout.GestureRecognizers>
-                  <TapGestureRecognizer 
-                    Command="{Binding ShowSelectedBusLineStationsCommand}"/>
+                  <TapGestureRecognizer Command="{Binding ShowSelectedBusLineStationsCommand}"/>
                 </StackLayout.GestureRecognizers>
                 <StackLayout.Padding>
                   <OnPlatform x:TypeArguments="Thickness"
@@ -115,6 +113,3 @@
     </ContentPage>
   </TabbedPage.Children>
 </TabbedPage>
-
-<!--Header="{Binding LastUpdated}"
-                HeaderTemplate="{StaticResource BusLinesListHeaderDataTemplate}"-->

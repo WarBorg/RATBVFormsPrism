@@ -7,7 +7,29 @@ namespace RATBVFormsPrism.ViewModels
 {
     public class BusViewModelBase : BindableBase, INavigationAware
     {
+        #region Properties
+
         public virtual string Title { get; set; }
+
+        protected bool IsInternetAvailable
+        {
+            get
+            {
+                // TODO use Xamarin Essentials
+                if (!CrossConnectivity.Current.IsConnected)
+                {
+                    UserDialogs.Instance.Toast("No Internet connection detected");
+
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        #endregion
+
+        #region INavigationAware Virtual Methods
 
         public virtual void OnNavigatedFrom(NavigationParameters parameters)
         {
@@ -21,17 +43,6 @@ namespace RATBVFormsPrism.ViewModels
         {
         }
 
-        protected bool IsInternetAvailable()
-        {
-            // TODO use Xamarin Essentials
-            if (!CrossConnectivity.Current.IsConnected)
-            {
-                UserDialogs.Instance.Toast("No Internet connection detected");
-
-                return false;
-            }
-
-            return true;
-        }
+        #endregion
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Acr.UserDialogs;
 using Prism.Commands;
 using Prism.Navigation;
@@ -14,78 +15,67 @@ namespace RATBVFormsPrism.ViewModels
 {
     public class BusTimeTableViewModel : BusViewModelBase
     {
-        #region Members
+        #region Dependencies
 
         private readonly IBusDataService _busDataService;
         private readonly IBusWebService _busWebService;
 
-        private BusStationModel _busStation;
-
-        private List<BusTimeTableModel> _busTimeTableWeekdays;
-        private List<BusTimeTableModel> _busTimeTableSaturday;
-        private List<BusTimeTableModel> _busTimeTableSunday;
-        private List<BusTimeTableModel> _busTimeTableHolidayWeekdays;
-
-        private string _lastUpdated = "never";
-
-        private bool _isBusy;
-
-        private DelegateCommand _refreshCommand;
-
-        #endregion Members
+        #endregion
 
         #region Properties
 
         //TODO add bus line number
         public string BusLineAndStation
         {
-            get { return BusStation == null ? String.Empty : BusStation.Name; }
+            get => BusStation == null ? string.Empty : BusStation.Name;
         }
 
+        private BusStationModel _busStation;
         public BusStationModel BusStation
         {
-            get { return _busStation; }
-            set { SetProperty(ref _busStation, value); }
+            get => _busStation;
+            set => SetProperty(ref _busStation, value);
         }
 
+        private List<BusTimeTableModel> _busTimeTableWeekdays;
         public List<BusTimeTableModel> BusTimeTableWeekdays
         {
-            get { return _busTimeTableWeekdays; }
-            set { SetProperty(ref _busTimeTableWeekdays, value); }
+            get => _busTimeTableWeekdays;
+            set => SetProperty(ref _busTimeTableWeekdays, value);
         }
 
+        private List<BusTimeTableModel> _busTimeTableSaturday;
         public List<BusTimeTableModel> BusTimeTableSaturday
         {
-            get { return _busTimeTableSaturday; }
-            set { SetProperty(ref _busTimeTableSaturday, value); }
+            get => _busTimeTableSaturday;
+            set => SetProperty(ref _busTimeTableSaturday, value);
         }
 
+        private List<BusTimeTableModel> _busTimeTableSunday;
         public List<BusTimeTableModel> BusTimeTableSunday
         {
-            get { return _busTimeTableSunday; }
-            set { SetProperty(ref _busTimeTableSunday, value); }
+            get => _busTimeTableSunday;
+            set => SetProperty(ref _busTimeTableSunday, value);
         }
 
+        private List<BusTimeTableModel> _busTimeTableHolidayWeekdays;
         public List<BusTimeTableModel> BusTimeTableHolidayWeekdays
         {
-            get { return _busTimeTableHolidayWeekdays; }
-            set { SetProperty(ref _busTimeTableHolidayWeekdays, value); }
+            get => _busTimeTableHolidayWeekdays;
+            set => SetProperty(ref _busTimeTableHolidayWeekdays, value);
         }
 
         public override string Title
         {
-            get
-            {
-                if (Device.RuntimePlatform == Device.UWP)
-                    return String.Format("{0} - Updated on {1}", BusLineAndStation, LastUpdated);
-
-                return BusLineAndStation;
-            }
+            get => Device.RuntimePlatform == Device.UWP
+                                           ? $"{BusLineAndStation} - Updated on {LastUpdated}"
+                                           : BusLineAndStation;
         }
 
+        private string _lastUpdated = "never";
         public string LastUpdated
         {
-            get { return _lastUpdated; }
+            get => _lastUpdated;
             set
             {
                 SetProperty(ref _lastUpdated, value);
@@ -93,26 +83,28 @@ namespace RATBVFormsPrism.ViewModels
             }
         }
 
+        private bool _isBusy;
         public bool IsBusy
         {
-            get { return _isBusy; }
-            set { SetProperty(ref _isBusy, value); }
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
         }
 
-        #region Commands
+        #endregion
 
-        public DelegateCommand RefreshCommand
+        #region Command Properties
+
+        private DelegateCommand _refreshCommand;
+        public ICommand RefreshCommand
         {
             get
             {
-                _refreshCommand = _refreshCommand ?? new DelegateCommand(DoRefreshCommand, () => { return !IsBusy; });
+                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => { return !IsBusy; });
                 return _refreshCommand;
             }
         }
 
-        #endregion Commands
-
-        #endregion Properties
+        #endregion
 
         #region Constructors
 
@@ -122,11 +114,9 @@ namespace RATBVFormsPrism.ViewModels
             _busWebService = busWebService;
         }
         
-        #endregion Constructors
+        #endregion
 
-        #region Methods
-
-        #region Commands
+        #region Command Methods
 
         private async void DoRefreshCommand()
         {
@@ -142,9 +132,9 @@ namespace RATBVFormsPrism.ViewModels
             _refreshCommand.RaiseCanExecuteChanged();
         }
 
-        #endregion Commands
+        #endregion
 
-        #region Navigation
+        #region Navigation Methods
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
@@ -153,49 +143,61 @@ namespace RATBVFormsPrism.ViewModels
             await GetBusTimeTableAsync();
         }
 
-        #endregion Navigation
+        #endregion
+
+        #region Methods
 
         private async Task GetBusTimeTableAsync()
         {
             if (BusStation == null)
+            {
                 return;
+            }
 
             var busTimeTableCount = await _busDataService.CountBusTimeTableAsync((int)BusStation.Id);
 
             if (busTimeTableCount == 0)
+            {
                 await GetWebBusTimeTableAsync(BusStation.SchedualLink);
+            }
             else
+            {
                 await GetLocalBusTimeTableAsync();
+            }
         }
 
         private async Task GetWebBusTimeTableAsync(string schedualLink)
         {
             using (UserDialogs.Instance.Loading($"Fetching Data... "))
             {
-                List<BusTimeTableModel> busTimetable = await _busWebService.GetBusTimeTableAsync(schedualLink);
+                var busTimetables = await _busWebService.GetBusTimeTableAsync(schedualLink);
 
-                GetTimeTableByTimeOfWeek(busTimetable);
+                GetTimeTableByTimeOfWeek(busTimetables);
 
-                LastUpdated = String.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+                LastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
 
-                await AddBusStationsToDatabaseAsync(busTimetable);
+                await AddBusStationsToDatabaseAsync(busTimetables);
             }
         }
 
         private async Task GetLocalBusTimeTableAsync()
         {
-            List<BusTimeTableModel> busTimetable = await _busDataService.GetBusTimeTableByBusStationId((int)BusStation.Id);
+            var busTimetables = await _busDataService.GetBusTimeTableByBusStationId((int)BusStation.Id);
 
-            LastUpdated = busTimetable.FirstOrDefault().LastUpdateDate;
+            LastUpdated = busTimetables.FirstOrDefault()
+                                       .LastUpdateDate;
 
-            GetTimeTableByTimeOfWeek(busTimetable);
+            GetTimeTableByTimeOfWeek(busTimetables);
         }
 
         private void GetTimeTableByTimeOfWeek(List<BusTimeTableModel> busTimetable)
         {
-            BusTimeTableWeekdays = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.WeekDays).ToList();
-            BusTimeTableSaturday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Saturday).ToList();
-            BusTimeTableSunday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Sunday).ToList();
+            BusTimeTableWeekdays = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.WeekDays)
+                                               .ToList();
+            BusTimeTableSaturday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Saturday)
+                                               .ToList();
+            BusTimeTableSunday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Sunday)
+                                             .ToList();
         }
 
         private async Task AddBusStationsToDatabaseAsync(List<BusTimeTableModel> busTimeTables)
@@ -210,6 +212,6 @@ namespace RATBVFormsPrism.ViewModels
             await _busDataService.InsertOrReplaceBusTimeTablesAsync(busTimeTables);
         }
 
-        #endregion Methods
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using System.Windows.Input;
+using Prism.Commands;
 using Prism.Navigation;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
@@ -8,13 +9,17 @@ namespace RATBVFormsPrism.ViewModels
 {
     public class BusStationViewModel : BusViewModelBase
     {
-        #region Members
+        #region Dependencies
 
         private readonly INavigationService _navigationService;
 
+        #endregion
+
+        #region Fields
+
         private readonly BusStationModel _busStation;
 
-        #endregion Members
+        #endregion
 
         #region Properties
 
@@ -22,33 +27,35 @@ namespace RATBVFormsPrism.ViewModels
         public string Name { get; set; }
         public string SchedualLink { get; set; }
 
-        #region Commands
+        #endregion
 
-        public DelegateCommand ShowSelectedBusTimeTableCommand
+        #region Command Properties
+
+        public ICommand ShowSelectedBusTimeTableCommand
         {
             get
             {
                 return new DelegateCommand(async () =>
                 {
-                    if (IsInternetAvailable())
+                    if (IsInternetAvailable)
                     {
-                        var parameters = new NavigationParameters();
-                        parameters.Add(AppNavigation.BusStation, _busStation);
+                        var parameters = new NavigationParameters
+                        {
+                            { AppNavigation.BusStation, _busStation }
+                        };
 
-                        //await _navigationService.NavigateAsync<BusTimeTableViewModel>(parameters);
                         await _navigationService.NavigateAsync(nameof(BusTimeTable), parameters);
                     }
                 });
             }
         }
 
-        #endregion Commands
-
-        #endregion Properties
+        #endregion
 
         #region Constructors
 
-        public BusStationViewModel(BusStationModel busStation, INavigationService navigationService)
+        public BusStationViewModel(BusStationModel busStation,
+                                   INavigationService navigationService)
         {
             _busStation = busStation;
             _navigationService = navigationService;
@@ -58,6 +65,6 @@ namespace RATBVFormsPrism.ViewModels
             SchedualLink = _busStation.SchedualLink;
         }
         
-        #endregion Constructors
+        #endregion
     }
 }
