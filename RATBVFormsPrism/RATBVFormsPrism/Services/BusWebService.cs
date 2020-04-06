@@ -1,16 +1,15 @@
-﻿using HtmlAgilityPack;
-using RATBVFormsPrism.Constants;
-using RATBVFormsPrism.Interfaces;
-using RATBVFormsPrism.Models;
-using Refit;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using HtmlAgilityPack;
+using RATBVData.Models.Models;
+using RATBVFormsPrism.Constants;
+using RATBVFormsPrism.Interfaces;
+using Refit;
 using Xamarin.Essentials;
 
 namespace RATBVFormsPrism.Services
@@ -62,125 +61,16 @@ namespace RATBVFormsPrism.Services
             return handler;
         }
 
-        #region Bus Lines
+        #region IBusWebService Methods
 
         public async Task<List<BusLineModel>> GetBusLinesAsync()
         {
             return await _busApi.GetBusLines();
         }
 
-        #endregion Bus Lines
-
-        #region Bus Stations
-
         public async Task<List<BusStationModel>> GetBusStationsAsync(string lineNumberLink)
-        {   
-            var busStations = new List<BusStationModel>();
-
-            var lineNumberStationsLink = await GetBusMainDisplayAsync(lineNumberLink, true);
-
-            var url = string.Format("{0}{1}", "http://www.ratbv.ro/afisaje/", lineNumberStationsLink);
-
-            var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
-
-            var response = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
-
-            Stream responseStream = response.GetResponseStream();
-
-            HtmlDocument doc = new HtmlDocument();
-
-            doc.Load(response.GetResponseStream());
-
-            var div = doc.DocumentNode
-                    .Descendants("div")
-                    .Where(x => x.Attributes.Contains("id") &&
-                                x.Attributes["id"].Value.Contains("div_center_"))
-                    .ToList();
-
-            bool isFirstScheduleLink = true;
-            string firstScheduleLink = String.Empty;
-
-            foreach (HtmlNode station in div)
-            {
-                string stationName = station.InnerText.Trim();
-                string scheduleLink = station.Descendants("a").FirstOrDefault().Attributes["href"].Value;
-                string lineLink = lineNumberStationsLink.Substring(0, lineNumberStationsLink.IndexOf('/'));
-                string fullSchedualLink = String.Format("{0}/{1}", lineLink, scheduleLink);
-
-                // Save the first schedule link 
-                if (isFirstScheduleLink)
-                {
-                    firstScheduleLink = scheduleLink;
-
-                    isFirstScheduleLink = false;
-                }
-
-                if (fullSchedualLink.Contains("/../"))
-                {
-                    string reverseScheduleLink = firstScheduleLink;
-                    string reverseLineLink = fullSchedualLink.Substring(fullSchedualLink.LastIndexOf("/") + 1).Replace(".html", String.Empty);
-
-                    if (reverseScheduleLink.Contains("_cl1_"))
-                        reverseScheduleLink = reverseScheduleLink.Replace("_cl1_", "_cl2_");
-                    else if (reverseScheduleLink.Contains("_cl2_"))
-                        reverseScheduleLink = reverseScheduleLink.Replace("_cl2_", "_cl1_");
-
-                    fullSchedualLink = String.Format("{0}/{1}", reverseLineLink, reverseScheduleLink);
-                }
-
-                busStations.Add(new BusStationModel
-                {
-                    Name = stationName,
-                    SchedualLink = fullSchedualLink
-                });
-            }
-
-            return busStations;
-        }
-
-        private async Task<string> GetBusMainDisplayAsync(string lineNumberLink, bool IsStationRequest)
         {
-            try
-            {
-                string url = String.Format("{0}{1}", "http://www.ratbv.ro", lineNumberLink);
-
-                var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
-
-                var response = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
-
-                Stream responseStream = response.GetResponseStream();
-
-                HtmlDocument doc = new HtmlDocument();
-
-                doc.Load(response.GetResponseStream());
-
-                if (IsStationRequest)
-                {
-                    HtmlNode frameStations = doc.DocumentNode
-                            .Descendants("frame")
-                            .Where(x => x.Attributes.Contains("name") &&
-                                        x.Attributes.Contains("noresize") &&
-                                        x.Attributes["name"].Value.Equals("frTabs") &&
-                                        x.Attributes["noresize"].Value.Equals("noresize"))
-                            .SingleOrDefault();
-
-                    return frameStations.Attributes["src"].Value;
-                }
-                else
-                {
-                    HtmlNode frameSchedual = doc.DocumentNode
-                            .Descendants("frame")
-                            .Where(x => x.Attributes.Contains("name") &&
-                                        x.Attributes["name"].Value.Equals("MainFrame"))
-                            .SingleOrDefault();
-
-                    return frameSchedual.Attributes["src"].Value;
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return await _busApi.GetBusStations(lineNumberLink);
         }
 
         #endregion Bus Stations

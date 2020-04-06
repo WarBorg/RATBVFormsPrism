@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <PackageReference Include="Acr.UserDialogs" Version="7.1.0.442" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.6.11" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Prism.Unity.Forms" Version="7.0.0.396" />
     <PackageReference Include="SQLiteNetExtensions-netstandard" Version="2.0.0-alpha3" />
@@ -24,4 +23,7 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.5.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\RATBVData\RATBVData.Models\RATBVData.Models.csproj" />
+  </ItemGroup>
 </Project>

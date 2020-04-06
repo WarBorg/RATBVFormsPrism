@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using RATBVFormsPrism.Models;
+using RATBVData.Models.Models;
 using Refit;
 
 namespace RATBVFormsPrism.Interfaces
@@ -13,5 +12,8 @@ namespace RATBVFormsPrism.Interfaces
 
         [Get("/buslines/{lineNumber}")]
         Task<BusLineModel> GetBusLine(string lineNumber);
+
+        [Get("/busstations/{lineNumberLink}")]
+        Task<List<BusStationModel>> GetBusStations(string lineNumberLink);
     }
 }

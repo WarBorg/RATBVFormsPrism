@@ -1,12 +1,13 @@
-using Prism.Commands;
-using Prism.Navigation;
-using RATBVFormsPrism.Constants;
-using RATBVFormsPrism.Interfaces;
-using RATBVFormsPrism.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Prism.Commands;
+using Prism.Navigation;
+using RATBVData.Models.Enums;
+using RATBVData.Models.Models;
+using RATBVFormsPrism.Constants;
+using RATBVFormsPrism.Interfaces;
 using Xamarin.Forms;
 
 namespace RATBVFormsPrism.ViewModels
@@ -175,9 +176,15 @@ namespace RATBVFormsPrism.ViewModels
 
         private void GetBusLinesByType()
         {
-            BusLines = AllBusLines.Where(bl => bl.Type == BusTypes.Bus).Select(busLine => new BusLineViewModel(busLine, _navigationService)).ToList();
-            MidiBusLines = AllBusLines.Where(bl => bl.Type == BusTypes.Midibus).Select(busLine => new BusLineViewModel(busLine, _navigationService)).ToList();
-            TrolleybusLines = AllBusLines.Where(bl => bl.Type == BusTypes.Trolleybus).Select(busLine => new BusLineViewModel(busLine, _navigationService)).ToList();
+            BusLines = AllBusLines.Where(bl => bl.Type == BusTypes.Bus.ToString())
+                                  .Select(busLine => new BusLineViewModel(busLine, _navigationService))
+                                  .ToList();
+            MidiBusLines = AllBusLines.Where(bl => bl.Type == BusTypes.Midibus.ToString())
+                                      .Select(busLine => new BusLineViewModel(busLine, _navigationService))
+                                      .ToList();
+            TrolleybusLines = AllBusLines.Where(bl => bl.Type == BusTypes.Trolleybus.ToString())
+                                         .Select(busLine => new BusLineViewModel(busLine, _navigationService))
+                                         .ToList();
         }
 
         private async Task AddBusLinesToDatabaseAsync()

@@ -1,6 +1,6 @@
 ﻿using Prism.Commands;
 using Prism.Navigation;
-using RATBVFormsPrism.Models;
+using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
 using RATBVFormsPrism.Views;
 
