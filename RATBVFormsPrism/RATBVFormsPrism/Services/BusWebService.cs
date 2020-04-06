@@ -2,128 +2,71 @@
 using RATBVFormsPrism.Constants;
 using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.Models;
+using Refit;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace RATBVFormsPrism.Services
 {
     public class BusWebService : IBusWebService
     {
+        #region Dependencies
+
+        private readonly IBusApi _busApi;
+
+        #endregion
+
+        #region Constructor
+
+        public BusWebService()
+        {
+            const string IOSAddress = "https://localhost:5001/api";
+            const string AndroidAddress = "https://10.0.2.2:5001/api";
+                                                    
+            string baseAddress = DeviceInfo.Platform == DevicePlatform.Android ? AndroidAddress : IOSAddress;
+
+            var httpClient = new HttpClient(GetInsecureHandler())
+            {
+                BaseAddress = new Uri(baseAddress),
+                Timeout = TimeSpan.FromSeconds(30)
+            };
+
+            _busApi = RestService.For<IBusApi>(httpClient);
+        }
+
+        #endregion
+
         #region Methods
+
+        private HttpClientHandler GetInsecureHandler()
+        {
+            var handler = new HttpClientHandler();
+
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            {
+                if (cert.Issuer.Equals("CN=localhost"))
+                {
+                    return true;
+                }
+
+                return errors == System.Net.Security.SslPolicyErrors.None;
+            };
+
+            return handler;
+        }
 
         #region Bus Lines
 
         public async Task<List<BusLineModel>> GetBusLinesAsync()
         {
-            var id = 1;
-
-            var busLines = new List<BusLineModel>();
-
-            string url = "http://www.ratbv.ro/trasee-si-orare/";
-
-            try
-            {
-                var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
-
-                var response = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
-
-                Stream responseStream = response.GetResponseStream();
-
-                var doc = new HtmlDocument();
-
-                doc.Load(response.GetResponseStream());
-
-                var div = doc.DocumentNode
-                    .Descendants("div")
-                    .Where(x => x.Attributes.Contains("class") &&
-                                x.Attributes["class"].Value.Contains("box continut-pagina"))
-                    .SingleOrDefault();
-
-                var table = div.Element("table");
-
-                // Skip one because of the bus type titles on first row
-                var busLinesRows = table.Element("tbody").Elements("tr").Skip(1);
-
-                foreach (var row in busLinesRows)
-                {
-                    var items = row.Elements("td").ToArray();
-
-                    var line = string.Empty;
-                    var route = string.Empty;
-                    var type = string.Empty;
-
-                    for (int i = 0; i < items.Length; i++)
-                    {
-                        if (items[i].InnerText.Trim().Replace("&nbsp;", string.Empty).Length == 0)
-                            continue;
-
-                        var str = items[i].InnerText
-                            .Trim()
-                            .Replace("&nbsp;", " ")
-                            .Replace("&acirc;", "â");
-
-                        string linkNormalWay = items[i].Descendants("a").FirstOrDefault().Attributes["href"].Value;
-                        string linkReverseWay = linkNormalWay.Replace("dus", "intors");
-
-                        CleanUpBusLinesText(ref line, ref route, ref type, i, str);
-
-                        busLines.Add(new BusLineModel
-                        {
-                            Id = id++,
-                            Name = line,
-                            Route = route,
-                            Type = type,
-                            LinkNormalWay = linkNormalWay,
-                            LinkReverseWay = linkReverseWay
-                        });
-                    }
-                }
-
-                return busLines;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        private void CleanUpBusLinesText(ref string line, ref string route, ref string type, int i, string str)
-        {
-            // Add a space between the eventual letter after the number (ex 5B)
-            str = Regex.Replace(
-                str,
-                "(?<=[0-9])(?=[A-Za-z])|(?<=[A-Za-z])(?=[0-9])",
-                " ");
-
-            var line_route = str
-                .Split(' ')
-                .ToList();
-
-            // In case the number contains a letter connate it back to the number (ex 5B)
-            if (line_route[2].Length == 1)
-            {
-                line_route[1] += line_route[2];
-                line_route.RemoveAt(2);
-            }
-
-            line = $"{line_route[0]} {line_route[1]}";
-            
-            // When creating the route skip the first two items as they are the line number
-            route = line_route
-                .Skip(2)
-                .Aggregate((k, l) => $"{k} {l}");
-
-            if (i == 0)
-                type = BusTypes.Bus;
-            else if (i == 1)
-                type = BusTypes.Midibus;
-            else if (i == 2)
-                type = BusTypes.Trolleybus;
+            return await _busApi.GetBusLines();
         }
 
         #endregion Bus Lines

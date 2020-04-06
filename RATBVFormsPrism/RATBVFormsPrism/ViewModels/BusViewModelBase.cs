@@ -23,10 +23,10 @@ namespace RATBVFormsPrism.ViewModels
 
         protected bool IsInternetAvailable()
         {
+            // TODO use Xamarin Essentials
             if (!CrossConnectivity.Current.IsConnected)
             {
-                //UserDialogs.Instance.ErrorToast("No Internet connection detected");
-                UserDialogs.Instance.ShowError("No Internet connection detected");
+                UserDialogs.Instance.Toast("No Internet connection detected");
 
                 return false;
             }
