@@ -15,5 +15,8 @@ namespace RATBVFormsPrism.Interfaces
 
         [Get("/busstations/{lineNumberLink}")]
         Task<List<BusStationModel>> GetBusStations(string lineNumberLink);
+
+        [Get("/bustimetables/{scheduleLink}")]
+        Task<List<BusTimeTableModel>> GetBusTimeTables(string scheduleLink);
     }
 }
