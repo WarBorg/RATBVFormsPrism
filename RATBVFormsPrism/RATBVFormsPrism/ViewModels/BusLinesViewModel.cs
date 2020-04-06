@@ -124,7 +124,7 @@ namespace RATBVFormsPrism.ViewModels
 
         #endregion
 
-        #region Methods
+        #region Navigation Methods
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
@@ -150,6 +150,10 @@ namespace RATBVFormsPrism.ViewModels
                 }
             //}
         }
+
+        #endregion
+
+        #region Methods
 
         private async Task GetWebBusLinesAsync()
         {

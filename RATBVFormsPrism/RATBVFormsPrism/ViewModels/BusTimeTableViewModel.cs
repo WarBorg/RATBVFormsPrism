@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Acr.UserDialogs;
 using Prism.Commands;
 using Prism.Navigation;
+using RATBVData.Models.Enums;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
 using RATBVFormsPrism.Interfaces;
@@ -192,11 +193,14 @@ namespace RATBVFormsPrism.ViewModels
 
         private void GetTimeTableByTimeOfWeek(List<BusTimeTableModel> busTimetable)
         {
-            BusTimeTableWeekdays = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.WeekDays)
+            BusTimeTableWeekdays = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.WeekDays
+                                                                                            .ToString())
                                                .ToList();
-            BusTimeTableSaturday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Saturday)
+            BusTimeTableSaturday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Saturday
+                                                                                            .ToString())
                                                .ToList();
-            BusTimeTableSunday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Sunday)
+            BusTimeTableSunday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Sunday
+                                                                                          .ToString())
                                              .ToList();
         }
 

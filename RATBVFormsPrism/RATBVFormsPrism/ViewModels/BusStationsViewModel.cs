@@ -179,7 +179,13 @@ namespace RATBVFormsPrism.ViewModels
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
             //TODO use JSON serialization when sending data between pages
-            BusLine = parameters[AppNavigation.BusLine] as BusLineModel;
+            var busline = parameters[AppNavigation.BusLine] as BusLineModel;
+
+            // On back request the parameter comes null
+            if (busline != null)
+            {
+                BusLine = busline;
+            }
 
             await GetBusStationsAsync();
         }

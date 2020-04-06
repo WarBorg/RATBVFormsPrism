@@ -17,7 +17,7 @@ namespace RATBVFormsPrism.Services
 
         #endregion
 
-        #region Constructor
+        #region Constructors
 
         public BusWebService()
         {

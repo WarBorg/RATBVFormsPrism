@@ -13,26 +13,25 @@ namespace RATBVFormsPrism.Services
 {
     public class BusDataService : IBusDataService
     {
-        #region Memebers
+        #region Fields
 
         private readonly SQLiteAsyncConnection _asyncConnection;
 
-        #endregion Memebers
+        #endregion
 
-        #region Constructor
+        #region Constructors
 
         public BusDataService()
         {
             string sqliteFilename = "ratbvPrism.sql";
 
-            _asyncConnection = DependencyService.Get<ISQLite>().GetAsyncConnection(sqliteFilename);
+            _asyncConnection = DependencyService.Get<ISQLite>()
+                                                .GetAsyncConnection(sqliteFilename);
         }
 
-        #endregion Constructor
+        #endregion
 
-        #region Methods
-
-        #region Universal
+        #region Universal Methods
 
         public async Task CreateAllTablesAsync()
         {
@@ -55,25 +54,26 @@ namespace RATBVFormsPrism.Services
             await DeleteAllAsync<BusTimeTableModel>();
         }
 
-        #endregion Universal
+        #endregion
 
-        #region Bus Lines
+        #region Bus Lines Methods
 
         public Task<int> CountBusLines
         {
-            get 
-            {
-                return _asyncConnection.Table<BusLineModel>().CountAsync();
-            }
+            get => _asyncConnection.Table<BusLineModel>()
+                                   .CountAsync();
         }
 
         public async Task<List<BusLineModel>> GetBusLinesByNameAsync(string nameFilter = null)
         {
             if (nameFilter == null)
-                nameFilter = String.Empty;
+            {
+                nameFilter = string.Empty;
+            }
 
             return await (from busLineTable in _asyncConnection.Table<BusLineModel>()
-                          where busLineTable.Name.Contains(nameFilter)
+                          where busLineTable.Name
+                                            .Contains(nameFilter)
                           orderby busLineTable.Id
                           select busLineTable).ToListAsync();
         }
@@ -103,9 +103,9 @@ namespace RATBVFormsPrism.Services
             return await InsertOrReplaceAllAsync(busLines);
         }
 
-        #endregion Bus Lines
+        #endregion
 
-        #region Bus Stations
+        #region Bus Stations Methods
 
         public async Task<int> CountBusStationsAsync(int busLineId, string direction)
         {
@@ -115,15 +115,20 @@ namespace RATBVFormsPrism.Services
                           select busStationTable).CountAsync();
         }
 
-        public async Task<List<BusStationModel>> GetBusStationsByNameAsync(int busId, string direction, string nameFilter = null)
+        public async Task<List<BusStationModel>> GetBusStationsByNameAsync(int busId,
+                                                                           string direction,
+                                                                           string nameFilter = null)
         {
             if (nameFilter == null)
-                nameFilter = String.Empty;
+            {
+                nameFilter = string.Empty;
+            }
 
             return await (from busStationTable in _asyncConnection.Table<BusStationModel>()
                           where busStationTable.BusLineId == busId
-                          && busStationTable.Direction == direction
-                          && busStationTable.Name.Contains(nameFilter)
+                             && busStationTable.Direction == direction
+                             && busStationTable.Name
+                                               .Contains(nameFilter)
                           orderby busStationTable.Id
                           select busStationTable).ToListAsync();
         }
@@ -162,16 +167,18 @@ namespace RATBVFormsPrism.Services
                     var existingStation = storedBusStations.FirstOrDefault(b => b.Name == station.Name);
 
                     if (existingStation != null)
+                    {
                         station.Id = existingStation.Id;
+                    }
                 }
             }
 
             return await InsertOrReplaceAllAsync(busStations);
         }
 
-        #endregion Bus Stations
+        #endregion
 
-        #region Bus Time Table
+        #region Bus Time Table Methods
 
         public async Task<int> CountBusTimeTableAsync(int busStationId)
         {
@@ -218,21 +225,25 @@ namespace RATBVFormsPrism.Services
             {
                 foreach (var timeTable in busTimeTables)
                 {
-                    var existingTimeTable = storedBusTimeTables.FirstOrDefault(b => b.BusStationId == timeTable.BusStationId && b.Hour == timeTable.Hour);
+                    var existingTimeTable = storedBusTimeTables.FirstOrDefault(b => b.BusStationId == timeTable.BusStationId
+                                                                                 && b.Hour == timeTable.Hour);
 
                     if (existingTimeTable != null)
+                    {
                         timeTable.Id = existingTimeTable.Id;
+                    }
                 }
             }
 
             return await InsertOrReplaceAllAsync(busTimeTables);
         }
 
-        #endregion Bus Time Table
+        #endregion
 
-        #region Extensions
+        #region Insert / Delete Methods
 
-        public async Task<int> InsertOrReplaceAllAsync(IEnumerable items, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<int> InsertOrReplaceAllAsync(IEnumerable items,
+                                                       CancellationToken cancellationToken = default)
         {
             if (items == null)
             {
@@ -251,7 +262,7 @@ namespace RATBVFormsPrism.Services
             return returnItems;
         }
 
-        private Task<int> DeleteAllAsync<T>(CancellationToken cancellationToken = default(CancellationToken))
+        private Task<int> DeleteAllAsync<T>(CancellationToken cancellationToken = default)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -263,8 +274,6 @@ namespace RATBVFormsPrism.Services
             }, cancellationToken, TaskCreationOptions.None, null ?? TaskScheduler.Default);
         }
 
-        #endregion Extensions
-
-        #endregion Methods
+        #endregion
     }
 }
