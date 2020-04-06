@@ -15,11 +15,7 @@ namespace RATBVFormsPrism.UWP.Services
 {
     public class SQLite_UWP : ISQLite
     {
-        public SQLite_UWP()
-        {
-        }
-
-        #region ISQLite implementation
+        #region ISQLite Methods
 
         public SQLite.Net.SQLiteConnection GetConnection(string databaseName)
         {

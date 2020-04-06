@@ -1,8 +1,8 @@
+using System;
+using System.IO;
 using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.iOS.Services;
 using SQLite;
-using System;
-using System.IO;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(SQLite_iOS))]
@@ -11,17 +11,18 @@ namespace RATBVFormsPrism.iOS.Services
 {
     public class SQLite_iOS : ISQLite
     {
-        public SQLite_iOS ()
-        {
-        }
-
-        #region ISQLite implementation
+        #region ISQLite Methods
 
         private string GetPath(string databaseName)
         {
             var sqliteFilename = databaseName;
-            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal); // Documents folder
-            string libraryPath = Path.Combine(documentsPath, "..", "Library"); // Library folder
+
+            // Documents folder
+            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder
+                                                                        .Personal);
+
+            // Library folder
+            string libraryPath = Path.Combine(documentsPath, "..", "Library"); 
 
             return Path.Combine(libraryPath, sqliteFilename);
         }
