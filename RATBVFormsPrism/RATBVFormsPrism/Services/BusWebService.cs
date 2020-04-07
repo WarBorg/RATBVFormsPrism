@@ -21,16 +21,18 @@ namespace RATBVFormsPrism.Services
 
         public BusWebService()
         {
-            const string IOSBaseAddress = "https://localhost:5001/api";
-            const string AndroidBaseAddress = "https://10.0.2.2:5001/api";
-                                                    
-            string baseAddress = DeviceInfo.Platform == DevicePlatform.Android
-                                                      ? AndroidBaseAddress
-                                                      : IOSBaseAddress;
+            const string IOSLocalBaseAddress = "https://localhost:5001/api";
+            const string AndroidLocalBaseAddress = "https://10.0.2.2:5001/api";
+            const string RemoteBaseAddress = "https://ratbvwebapi.azurewebsites.net/api";
+
+
+            string baseLocalAddress = DeviceInfo.Platform == DevicePlatform.Android
+                                                           ? AndroidLocalBaseAddress
+                                                           : IOSLocalBaseAddress;
 
             var httpClient = new HttpClient(GetInsecureHandler())
             {
-                BaseAddress = new Uri(baseAddress),
+                BaseAddress = new Uri(RemoteBaseAddress),
                 Timeout = TimeSpan.FromSeconds(30)
             };
 
