@@ -23,20 +23,21 @@ namespace RATBVFormsPrism.Services
         {
             const string IOSLocalBaseAddress = "https://localhost:5001/api";
             const string AndroidLocalBaseAddress = "https://10.0.2.2:5001/api";
-            const string RemoteBaseAddress = "https://ratbvwebapi.azurewebsites.net/api";
+            const string RemoteApiBaseAddress = "https://ratbvwebapi.azurewebsites.net/api";
 
 
             string baseLocalAddress = DeviceInfo.Platform == DevicePlatform.Android
                                                            ? AndroidLocalBaseAddress
                                                            : IOSLocalBaseAddress;
 
-            var httpClient = new HttpClient(GetInsecureHandler())
+            // To be used as a param for RestService.For<IBusApi> when debugging locally
+            var localHttpClient = new HttpClient(GetInsecureHandler())
             {
-                BaseAddress = new Uri(RemoteBaseAddress),
+                BaseAddress = new Uri(baseLocalAddress),
                 Timeout = TimeSpan.FromSeconds(30)
             };
 
-            _busApi = RestService.For<IBusApi>(httpClient);
+            _busApi = RestService.For<IBusApi>(RemoteApiBaseAddress);
         }
 
         #endregion
