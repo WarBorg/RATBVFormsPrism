@@ -1,75 +1,62 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+            android:TabbedPage.ToolbarPlacement="Bottom"
             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
             prism:ViewModelLocator.AutowireViewModel="True"
             x:Class="RATBVFormsPrism.Views.BusStations"
             Title="{Binding Title}">
-  <TabbedPage.Children>
-    <ContentPage Title="{Binding BusLineName}">
-      <StackLayout Orientation="Vertical">
-        <StackLayout Padding="0,5,5,0" HeightRequest="25">
-          <StackLayout.IsVisible>
-            <OnPlatform x:TypeArguments="x:Boolean"
-                        WinPhone="False"
-                        Android="True"
-                        iOS="True"/>
-          </StackLayout.IsVisible>
-          <Label FontSize="Medium" HorizontalOptions="End"
-                 Text="{Binding LastUpdated, StringFormat='Updated on {0}'}" />
-        </StackLayout>
-        <ListView IsPullToRefreshEnabled="True"
-                  ItemsSource="{Binding BusStations}"
-                  RefreshCommand="{Binding RefreshCommand}"
-                  IsRefreshing="{Binding IsBusy, Mode=OneWay}">
-          <ListView.ItemTemplate>
-            <DataTemplate>
-              <ViewCell>
-                <StackLayout>
-                  <StackLayout.GestureRecognizers>
-                    <TapGestureRecognizer
-                      Command="{Binding ShowSelectedBusTimeTableCommand}"/>
-                  </StackLayout.GestureRecognizers>
-                  <StackLayout.Padding>
-                    <OnPlatform x:TypeArguments="Thickness"
-                                iOS="5,0,0,0"/>
-                  </StackLayout.Padding>
-                  <Label FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"
-                         Text="{Binding Name}"/>
+    <TabbedPage.Children>
+        <ContentPage Title="{Binding BusLineName}">
+            <ContentPage.ToolbarItems>
+                <ToolbarItem Text="Tour"
+                             Order="Primary"
+                             Priority="0"
+                             IconImageSource="{x:OnPlatform Android='ic_action_return.png',
+                                                            iOS='Return.png',
+                                                            UWP='Assets/reverse.png'}"
+                             Command="{Binding ReverseCommand}"/>
+                <ToolbarItem Text="Download"
+                             Order="Primary"
+                             Priority="1"
+                             IconImageSource="{x:OnPlatform Android='ic_action_download.png',
+                                                            iOS='Download.png',
+                                                            UWP='Assets/download.png'}"
+                             Command="{Binding DownloadCommand}"/>            
+            </ContentPage.ToolbarItems>
+
+            <StackLayout>
+                <StackLayout Padding="0,5,5,0"
+                             HeightRequest="25"
+                             IsVisible="{x:OnPlatform Default=True,
+                                                      UWP=False}">
+                    <Label FontSize="Medium"
+                           HorizontalOptions="End"
+                           Text="{Binding LastUpdated, StringFormat='Updated on {0}'}" />
                 </StackLayout>
-              </ViewCell>
-            </DataTemplate>
-          </ListView.ItemTemplate>
-        </ListView>
-      </StackLayout>
-      <ContentPage.ToolbarItems>
-        <ToolbarItem Name="Tour" Order="Primary" Priority="0"
-                     Command="{Binding ReverseCommand}">
-          <ToolbarItem.Icon>
-            <OnPlatform x:TypeArguments="FileImageSource"
-                        WinPhone="Assets/reverse.png"
-                        Android="ic_action_return.png"
-                        iOS="Return.png"/>
-          </ToolbarItem.Icon>
-        </ToolbarItem>
-        <ToolbarItem Name="Download" Order="Primary" Priority="1"
-                     Command="{Binding DownloadCommand}">
-          <ToolbarItem.Icon>
-            <OnPlatform x:TypeArguments="FileImageSource"
-                        WinPhone="Assets/download.png"
-                        Android="ic_action_download.png"
-                        iOS="Download.png"/>
-          </ToolbarItem.Icon>
-        </ToolbarItem>
-        <!--<ToolbarItem Name="Refresh" Order="Primary" Priority="1"
-                     Command="{Binding RefreshCommand}">
-          <ToolbarItem.Icon>
-            <OnPlatform x:TypeArguments="FileImageSource"
-                        WinPhone="Assets/refresh.png"/>
-          </ToolbarItem.Icon>
-        </ToolbarItem>-->
-      </ContentPage.ToolbarItems>
-    </ContentPage>
-    <!--<ContentPage Title="None"/>-->
-  </TabbedPage.Children>
+                <RefreshView IsRefreshing="{Binding IsBusy}"
+                             Command="{Binding RefreshCommand}">
+                    <ListView ItemsSource="{Binding BusStations}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <StackLayout Padding="{x:OnPlatform iOS='5,0,0,0'}">
+                                        <StackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding ShowSelectedBusTimeTableCommand}"/>
+                                        </StackLayout.GestureRecognizers>
+                                        <Label FontSize="Medium"
+                                               FontAttributes="Bold"
+                                               VerticalOptions="CenterAndExpand"
+                                               HorizontalOptions="Start"
+                                               Text="{Binding Name}"/>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </RefreshView>
+            </StackLayout>
+        </ContentPage>
+    </TabbedPage.Children>
 </TabbedPage>

@@ -82,7 +82,7 @@ namespace RATBVFormsPrism.ViewModels
         {
             get
             {
-                _refreshCommand ??= new DelegateCommand(DoRefreshCommand);//, () => { return !IsBusy; });
+                _refreshCommand ??= new DelegateCommand(DoRefreshCommand);
                 return _refreshCommand;
             }
         }

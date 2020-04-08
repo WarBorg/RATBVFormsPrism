@@ -120,7 +120,7 @@ namespace RATBVFormsPrism.ViewModels
         {
             get
             {
-                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => { return !IsBusy; });
+                _refreshCommand ??= new DelegateCommand(DoRefreshCommand);
                 return _refreshCommand;
             }
         }
@@ -146,18 +146,9 @@ namespace RATBVFormsPrism.ViewModels
 
         private async void DoRefreshCommand()
         {
-            if (IsBusy)
-            {
-                return;
-            }
-
-            IsBusy = true;
-            _refreshCommand.RaiseCanExecuteChanged();
-
             await GetBusStationsAsync(true);
 
             IsBusy = false;
-            _refreshCommand.RaiseCanExecuteChanged();
         }
 
         private async void DoDownloadCommand()
@@ -178,11 +169,9 @@ namespace RATBVFormsPrism.ViewModels
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
-            //TODO use JSON serialization when sending data between pages
-            var busline = parameters[AppNavigation.BusLine] as BusLineModel;
-
             // On back request the parameter comes null
-            if (busline != null)
+            //TODO use JSON serialization when sending data between pages
+            if (parameters[AppNavigation.BusLine] is BusLineModel busline)
             {
                 BusLine = busline;
             }
@@ -301,7 +290,7 @@ namespace RATBVFormsPrism.ViewModels
 
             foreach (var busStation in BusStations)
             {
-                List<BusTimeTableModel> busTimetables = await _busWebService.GetBusTimeTableAsync(busStation.SchedualLink);
+                var busTimetables = await _busWebService.GetBusTimeTableAsync(busStation.SchedualLink);
 
                 foreach (var busTimetableHour in busTimetables)
                 {
