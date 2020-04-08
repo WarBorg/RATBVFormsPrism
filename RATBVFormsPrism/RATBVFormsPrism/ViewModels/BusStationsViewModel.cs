@@ -217,11 +217,27 @@ namespace RATBVFormsPrism.ViewModels
 
             if (isRefresh || (busStationsCount == 0))
             {
-                await GetWebBusStationsAsync(_linkDirection, Direction);
+                if (isRefresh)
+                {
+                    await GetWebBusStationsAsync(_linkDirection, Direction);
+                }
+                else
+                {
+                    await GetBusStationsWithLoadingScreenAsync(_linkDirection, Direction);
+                }
+
             }
             else
             {
                 await GetLocalBusStationsAsync();
+            }
+        }
+
+        private async Task GetBusStationsWithLoadingScreenAsync(string linkDirection, string direction)
+        {
+            using (UserDialogs.Instance.Loading($"Fetching Data... "))
+            {
+                await GetWebBusStationsAsync(linkDirection, direction);
             }
         }
 
@@ -232,22 +248,19 @@ namespace RATBVFormsPrism.ViewModels
                 return;
             }
 
-            using (UserDialogs.Instance.Loading($"Fetching Data... "))
+            var busStations = await _busWebService.GetBusStationsAsync(linkDirection);
+
+            if (busStations == null)
             {
-                var busStations = await _busWebService.GetBusStationsAsync(linkDirection);
-
-                if (busStations == null)
-                {
-                    return;
-                }
-
-                LastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
-
-                await AddBusStationsToDatabaseAsync(busStations, direction);
-
-                BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService))
-                                         .ToList();
+                return;
             }
+
+            LastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+
+            await AddBusStationsToDatabaseAsync(busStations, direction);
+
+            BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService))
+                                     .ToList();
         }
 
         private async Task GetLocalBusStationsAsync()

@@ -100,7 +100,7 @@ namespace RATBVFormsPrism.ViewModels
         {
             get
             {
-                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => { return !IsBusy; });
+                _refreshCommand ??= new DelegateCommand(DoRefreshCommand);
                 return _refreshCommand;
             }
         }
@@ -121,16 +121,9 @@ namespace RATBVFormsPrism.ViewModels
 
         private async void DoRefreshCommand()
         {
-            if (IsBusy)
-                return;
-
-            IsBusy = true;
-            _refreshCommand.RaiseCanExecuteChanged();
-
             await GetWebBusTimeTableAsync(BusStation.SchedualLink);
 
             IsBusy = false;
-            _refreshCommand.RaiseCanExecuteChanged();
         }
 
         #endregion
@@ -139,7 +132,11 @@ namespace RATBVFormsPrism.ViewModels
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
-            BusStation = parameters[AppNavigation.BusStation] as BusStationModel;
+            //TODO use JSON serialization when sending data between pages
+            if (parameters[AppNavigation.BusStation] is BusStationModel busStation)
+            {
+                BusStation = busStation;
+            }
 
             await GetBusTimeTableAsync();
         }
@@ -159,7 +156,7 @@ namespace RATBVFormsPrism.ViewModels
 
             if (busTimeTableCount == 0)
             {
-                await GetWebBusTimeTableAsync(BusStation.SchedualLink);
+                await GetBusTimeTableWithLoadingScreenAsync(BusStation.SchedualLink);
             }
             else
             {
@@ -167,18 +164,28 @@ namespace RATBVFormsPrism.ViewModels
             }
         }
 
-        private async Task GetWebBusTimeTableAsync(string schedualLink)
+        private async Task GetBusTimeTableWithLoadingScreenAsync(string schedualLink)
         {
             using (UserDialogs.Instance.Loading($"Fetching Data... "))
             {
-                var busTimetables = await _busWebService.GetBusTimeTableAsync(schedualLink);
-
-                GetTimeTableByTimeOfWeek(busTimetables);
-
-                LastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
-
-                await AddBusStationsToDatabaseAsync(busTimetables);
+                await GetWebBusTimeTableAsync(schedualLink);
             }
+        }
+
+        private async Task GetWebBusTimeTableAsync(string schedualLink)
+        {
+            if (!IsInternetAvailable)
+            {
+                return;
+            }
+
+            var busTimetables = await _busWebService.GetBusTimeTableAsync(schedualLink);
+
+            GetTimeTableByTimeOfWeek(busTimetables);
+
+            LastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+
+            await AddBusStationsToDatabaseAsync(busTimetables);
         }
 
         private async Task GetLocalBusTimeTableAsync()
