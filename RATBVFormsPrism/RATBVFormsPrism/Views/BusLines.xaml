@@ -1,115 +1,109 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+            android:TabbedPage.ToolbarPlacement="Bottom"
             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
             prism:ViewModelLocator.AutowireViewModel="True"
             x:Class="RATBVFormsPrism.Views.BusLines"
             Title="{Binding Title}">
-  <TabbedPage.Resources>
-    <ResourceDictionary>
-      <Style x:Key="NameLabelStyle" TargetType="Label">
-        <Setter Property="FontAttributes" Value="Bold"/>
-        <Setter Property="FontSize" Value="Large"/>
-          <!--<Setter.Value>
-            <OnPlatform x:TypeArguments="x:String"
-                        WinPhone="Large"
-                        Android="Medium"
-                        iOS="Large"/>
-          </Setter.Value>
-        </Setter>-->
-      </Style>
-      <Style x:Key="LastUpdatedLabelStyle" TargetType="Label">
-        <Setter Property="FontSize" Value="Medium"/>
-        <Setter Property="HorizontalOptions" Value="End"/>
-      </Style>
-      <Style x:Key="LastUpdatedStackLayoutStyle" TargetType="StackLayout">
-        <Setter Property="Padding" Value="0,5,5,0"/>
-        <Setter Property="IsVisible">
-          <Setter.Value>
-            <OnPlatform x:TypeArguments="x:Boolean"
-                        WinPhone="False"
-                        Android="True"
-                        iOS="True"/>
-          </Setter.Value>
-        </Setter>
-      </Style>
+    <TabbedPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="NameLabelStyle"
+                   TargetType="Label">
+                <Setter Property="FontAttributes"
+                        Value="Bold"/>
+                <Setter Property="FontSize"
+                        Value="Large"/>
+            </Style>
+            <Style x:Key="LastUpdatedLabelStyle"
+                   TargetType="Label">
+                <Setter Property="FontSize"
+                        Value="Medium"/>
+                <Setter Property="HorizontalOptions"
+                        Value="End"/>
+            </Style>
+            <Style x:Key="LastUpdatedStackLayoutStyle"
+                   TargetType="StackLayout">
+                <Setter Property="Padding" Value="0,5,5,0"/>
+                <Setter Property="IsVisible">
+                    <Setter.Value>
+                        <OnPlatform x:TypeArguments="x:Boolean"
+                                    WinPhone="False"
+                                    Android="True"
+                                    iOS="True"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-      <DataTemplate x:Key="BusLinesListHeaderDataTemplate">
-        <Label FontSize="Medium" Text="{Binding ., StringFormat='Updated on {0}'}"/>
-      </DataTemplate>
-      <DataTemplate x:Key="BusLinesListViewDataTemplate">
-        <ViewCell>
-              <StackLayout Orientation="Vertical">
-                <StackLayout.GestureRecognizers>
-                  <TapGestureRecognizer Command="{Binding ShowSelectedBusLineStationsCommand}"/>
-                </StackLayout.GestureRecognizers>
-                <StackLayout.Padding>
-                  <OnPlatform x:TypeArguments="Thickness"
-                              iOS="5,0,0,0"/>
-                </StackLayout.Padding>
-                <Label Style="{StaticResource NameLabelStyle}"
-                       Text="{Binding Name}"/>
-                <Label Text="{Binding Route}"/>
-              </StackLayout>
-            </ViewCell>
-      </DataTemplate>
-    </ResourceDictionary>
-  </TabbedPage.Resources>
-  
-  <TabbedPage.Children>
-    <ContentPage Title="Bus">
-      <ContentPage.Icon>
-        <OnPlatform x:TypeArguments="FileImageSource"
-                          iOS="Bus.png"/>
-      </ContentPage.Icon>
-      <StackLayout Orientation="Vertical">
-        <StackLayout Style="{StaticResource LastUpdatedStackLayoutStyle}">
-          <Label Style="{StaticResource LastUpdatedLabelStyle}"
-                 Text="{Binding LastUpdated, StringFormat='Updated on {0}'}" />
-        </StackLayout>
-        <ListView HasUnevenRows="True" IsPullToRefreshEnabled="True"
-                  ItemsSource="{Binding BusLines}"
-                  ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"
-                  RefreshCommand="{Binding RefreshCommand}"
-                  IsRefreshing="{Binding IsBusy, Mode=OneWay}">
-        </ListView>
-      </StackLayout>
-    </ContentPage>
-    <ContentPage Title="Midibus">
-      <ContentPage.Icon>
-        <OnPlatform x:TypeArguments="FileImageSource"
-                          iOS="MidiBus.png"/>
-      </ContentPage.Icon>
-      <StackLayout Orientation="Vertical">
-        <StackLayout Style="{StaticResource LastUpdatedStackLayoutStyle}">
-          <Label Style="{StaticResource LastUpdatedLabelStyle}"
-                 Text="{Binding LastUpdated, StringFormat='Updated on {0}'}" />
-        </StackLayout>
-        <ListView HasUnevenRows="True" IsPullToRefreshEnabled="True"
-                  ItemsSource="{Binding MidiBusLines}"
-                  ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"
-                  RefreshCommand="{Binding RefreshCommand}"
-                  IsRefreshing="{Binding IsBusy, Mode=OneWay}">
-        </ListView>
-      </StackLayout>
-    </ContentPage>
-    <ContentPage Title="Trolleybus">
-      <ContentPage.Icon>
-        <OnPlatform x:TypeArguments="FileImageSource"
-                          iOS="TrolleyBus.png"/>
-      </ContentPage.Icon>
-      <StackLayout Orientation="Vertical">
-        <StackLayout Style="{StaticResource LastUpdatedStackLayoutStyle}">
-          <Label Style="{StaticResource LastUpdatedLabelStyle}"
-                 Text="{Binding LastUpdated, StringFormat='Updated on {0}'}" />
-        </StackLayout>
-        <ListView HasUnevenRows="True" IsPullToRefreshEnabled="True"
-                  ItemsSource="{Binding TrolleybusLines}"
-                  ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"
-                  RefreshCommand="{Binding RefreshCommand}"
-                  IsRefreshing="{Binding IsBusy, Mode=OneWay}">
-        </ListView>
-      </StackLayout>
-    </ContentPage>
-  </TabbedPage.Children>
+            <ControlTemplate x:Key="BusLineTabPageTemplate">
+                <StackLayout>
+                    <StackLayout Style="{StaticResource LastUpdatedStackLayoutStyle}">
+                        <Label Style="{StaticResource LastUpdatedLabelStyle}"
+                               Text="{TemplateBinding BindingContext.LastUpdated,
+                                                      StringFormat='Updated on {0}'}" />
+                    </StackLayout>
+                    <RefreshView IsRefreshing="{TemplateBinding BindingContext.IsBusy}"
+                                 Command="{TemplateBinding BindingContext.RefreshCommand}">
+
+                        <ContentPresenter />
+
+                    </RefreshView>
+                </StackLayout>
+            </ControlTemplate>
+
+            <DataTemplate x:Key="BusLinesListViewDataTemplate">
+                <ViewCell>
+                    <StackLayout>
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ShowSelectedBusLineStationsCommand}"/>
+                        </StackLayout.GestureRecognizers>
+                        <StackLayout.Padding>
+                            <OnPlatform x:TypeArguments="Thickness"
+                                        iOS="5,0,0,0"/>
+                        </StackLayout.Padding>
+                        <Label Style="{StaticResource NameLabelStyle}"
+                               Text="{Binding Name}"/>
+                        <Label Text="{Binding Route}"/>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ResourceDictionary>
+    </TabbedPage.Resources>
+
+    <!--Tabbed Page Children-->
+    <TabbedPage.Children>
+        <ContentPage Title="Bus"
+                     ControlTemplate="{StaticResource BusLineTabPageTemplate}">
+            <ContentPage.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource"
+                            iOS="Bus.png"/>
+            </ContentPage.Icon>
+            <ListView HasUnevenRows="True"
+                      ItemsSource="{Binding BusLines}"
+                      ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"/>
+        </ContentPage>
+
+        <ContentPage Title="Midibus"
+                     ControlTemplate="{StaticResource BusLineTabPageTemplate}">
+            <ContentPage.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource"
+                            iOS="MidiBus.png"/>
+            </ContentPage.Icon>
+            <ListView HasUnevenRows="True"
+                      ItemsSource="{Binding MidiBusLines}"
+                      ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"/>
+        </ContentPage>
+
+        <ContentPage Title="Trolleybus"
+                     ControlTemplate="{StaticResource BusLineTabPageTemplate}">
+            <ContentPage.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource"
+                            iOS="TrolleyBus.png"/>
+            </ContentPage.Icon>
+            <ListView HasUnevenRows="True"
+                      ItemsSource="{Binding TrolleybusLines}"
+                      ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"/>
+        </ContentPage>
+    </TabbedPage.Children>
 </TabbedPage>

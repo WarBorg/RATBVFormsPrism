@@ -82,7 +82,7 @@ namespace RATBVFormsPrism.ViewModels
         {
             get
             {
-                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => { return !IsBusy; });
+                _refreshCommand ??= new DelegateCommand(DoRefreshCommand);//, () => { return !IsBusy; });
                 return _refreshCommand;
             }
         }
@@ -105,21 +105,12 @@ namespace RATBVFormsPrism.ViewModels
         #region Command Methods
 
         private async void DoRefreshCommand()
-        {
-            if (IsBusy)
-            {
-                return;
-            }
-
-            IsBusy = true;
-            _refreshCommand.RaiseCanExecuteChanged();
-
+        { 
             await GetWebBusLinesAsync();
 
-            IsBusy = false;
-            _refreshCommand.RaiseCanExecuteChanged();
-
             await AddBusLinesToDatabaseAsync();
+
+            IsBusy = false;
         }
 
         #endregion

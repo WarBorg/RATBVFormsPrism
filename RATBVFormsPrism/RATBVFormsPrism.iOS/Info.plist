@@ -21,11 +21,11 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>MinimumOSVersion</key>
-	<string>9.0</string>
+	<string>13.4</string>
 	<key>CFBundleDisplayName</key>
 	<string>RATBVFormsPrism</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.RATBVFormsPrism</string>
+	<string>com.warborg.RATBVFormsPrism</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>CFBundleIconFiles</key>
