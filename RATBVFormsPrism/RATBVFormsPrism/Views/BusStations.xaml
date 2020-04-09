@@ -41,7 +41,8 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell>
-                                    <StackLayout Padding="{x:OnPlatform iOS='5,0,0,0'}">
+                                    <StackLayout Padding="{x:OnPlatform Android='5,0,0,0',
+                                                                        iOS='15,0,0,0'}">
                                         <StackLayout.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding ShowSelectedBusTimeTableCommand}"/>
                                         </StackLayout.GestureRecognizers>

@@ -81,6 +81,21 @@
     <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_tab_trolleybus.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_tab_midibus.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_tab_bus.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_tab_trolleybus.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_tab_midibus.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_tab_bus.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_tab_trolleybus.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_tab_midibus.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_tab_bus.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_tab_trolleybus.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_tab_midibus.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_tab_bus.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_tab_bus.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_tab_midibus.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_tab_trolleybus.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\tabs.xml" />

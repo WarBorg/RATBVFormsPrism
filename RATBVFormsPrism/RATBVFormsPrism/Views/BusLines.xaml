@@ -50,7 +50,8 @@
 
             <DataTemplate x:Key="BusLinesListViewDataTemplate">
                 <ViewCell>
-                    <StackLayout Padding="{x:OnPlatform iOS='5,0,0,0'}">
+                    <StackLayout Padding="{x:OnPlatform Android='5,0,0,0',
+                                                        iOS='15,0,0,0'}">
                         <StackLayout.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ShowSelectedBusLineStationsCommand}"/>
                         </StackLayout.GestureRecognizers>
@@ -66,7 +67,8 @@
     <!--Tabbed Page Children-->
     <TabbedPage.Children>
         <ContentPage Title="Bus"
-                     IconImageSource="{x:OnPlatform iOS='Bus.png'}"
+                     IconImageSource="{x:OnPlatform Android='ic_tab_bus.png',
+                                                    iOS='Bus.png'}"
                      ControlTemplate="{StaticResource BusLineTabPageTemplate}">
             <ListView HasUnevenRows="True"
                       ItemsSource="{Binding BusLines}"
@@ -74,7 +76,8 @@
         </ContentPage>
 
         <ContentPage Title="Midibus"
-                     IconImageSource="{x:OnPlatform iOS='MidiBus.png'}"
+                     IconImageSource="{x:OnPlatform Android='ic_tab_midibus.png',
+                                                    iOS='MidiBus.png'}"
                      ControlTemplate="{StaticResource BusLineTabPageTemplate}">
             <ListView HasUnevenRows="True"
                       ItemsSource="{Binding MidiBusLines}"
@@ -82,7 +85,8 @@
         </ContentPage>
 
         <ContentPage Title="Trolleybus"
-                     IconImageSource="{x:OnPlatform iOS='TrolleyBus.png'}"
+                     IconImageSource="{x:OnPlatform Android='ic_tab_trolleybus.png',
+                                                    iOS='TrolleyBus.png'}"
                      ControlTemplate="{StaticResource BusLineTabPageTemplate}">
             <ListView HasUnevenRows="True"
                       ItemsSource="{Binding TrolleybusLines}"
