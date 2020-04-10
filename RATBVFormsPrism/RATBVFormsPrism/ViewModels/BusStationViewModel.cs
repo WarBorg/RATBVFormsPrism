@@ -31,22 +31,13 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Command Properties
 
+        private DelegateCommand _showSelectedBusTimeTableCommand;
         public ICommand ShowSelectedBusTimeTableCommand
         {
             get
             {
-                return new DelegateCommand(async () =>
-                {
-                    if (IsInternetAvailable)
-                    {
-                        var parameters = new NavigationParameters
-                        {
-                            { AppNavigation.BusStation, _busStation }
-                        };
-
-                        await _navigationService.NavigateAsync(nameof(BusTimeTable), parameters);
-                    }
-                });
+                _showSelectedBusTimeTableCommand ??= new DelegateCommand(DoShowSelectedBusTimeTableCommand);
+                return _showSelectedBusTimeTableCommand;
             }
         }
 
@@ -64,7 +55,21 @@ namespace RATBVFormsPrism.ViewModels
             Name = _busStation.Name;
             SchedualLink = _busStation.SchedualLink;
         }
-        
+
+        #endregion
+
+        #region Command Methods
+
+        private async void DoShowSelectedBusTimeTableCommand()
+        {
+            var parameters = new NavigationParameters
+            {
+                { AppNavigation.BusStation, _busStation }
+            };
+
+            await _navigationService.NavigateAsync(nameof(BusTimeTable), parameters);
+        }
+
         #endregion
     }
 }

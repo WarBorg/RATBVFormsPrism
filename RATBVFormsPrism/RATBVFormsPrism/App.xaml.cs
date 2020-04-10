@@ -1,8 +1,11 @@
-﻿using Prism.Ioc;
+﻿using Acr.UserDialogs;
+using Prism.Ioc;
 using Prism.Unity;
 using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.Services;
 using RATBVFormsPrism.Views;
+using Xamarin.Essentials.Implementation;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms.Xaml;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
@@ -27,6 +30,11 @@ namespace RATBVFormsPrism
 
         protected override void RegisterRequiredTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterInstance<IUserDialogs>(UserDialogs.Instance);
+
+            containerRegistry.Register<IConnectivity, ConnectivityImplementation>();
+
+            containerRegistry.Register<IConnectivityService, ConnectivityService>();
             containerRegistry.Register<IBusDataService, BusDataService>();
             containerRegistry.Register<IBusWebService, BusWebService>();
 

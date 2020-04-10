@@ -1,6 +1,4 @@
-﻿using Acr.UserDialogs;
-using Plugin.Connectivity;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using Prism.Navigation;
 
 namespace RATBVFormsPrism.ViewModels
@@ -10,22 +8,6 @@ namespace RATBVFormsPrism.ViewModels
         #region Properties
 
         public virtual string Title { get; set; }
-
-        protected bool IsInternetAvailable
-        {
-            get
-            {
-                // TODO use Xamarin Essentials
-                if (!CrossConnectivity.Current.IsConnected)
-                {
-                    UserDialogs.Instance.Toast("No Internet connection detected");
-
-                    return false;
-                }
-
-                return true;
-            }
-        }
 
         #endregion
 

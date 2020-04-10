@@ -17,9 +17,11 @@ namespace RATBVFormsPrism.ViewModels
     {
         #region Dependencies
 
-        private readonly INavigationService _navigationService;
         private readonly IBusDataService _busDataService;
         private readonly IBusWebService _busWebService;
+        private readonly IUserDialogs _userDilaogsService;
+        private readonly IConnectivityService _connectivityService;
+        private readonly INavigationService _navigationService;
 
         #endregion
 
@@ -131,10 +133,14 @@ namespace RATBVFormsPrism.ViewModels
 
         public BusStationsViewModel(IBusDataService busDataService,
                                     IBusWebService busWebService,
+                                    IUserDialogs userDialogsService,
+                                    IConnectivityService connectivityService,
                                     INavigationService navigationService)
         {
             _busDataService = busDataService;
             _busWebService = busWebService;
+            _userDilaogsService = userDialogsService;
+            _connectivityService = connectivityService;
             _navigationService = navigationService;
         }
 
@@ -153,14 +159,14 @@ namespace RATBVFormsPrism.ViewModels
 
         private async void DoDownloadCommand()
         {
-            if (!IsInternetAvailable)
+            if (!_connectivityService.IsInternetAvailable)
             {
                 return;
             }
 
             await DownloadAllStationsSchedualsAsync();
 
-            UserDialogs.Instance.Toast("Download complete for all bus stations");
+            _userDilaogsService.Toast("Download complete for all bus stations");
         }
         
         #endregion
@@ -235,7 +241,7 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task GetBusStationsWithLoadingScreenAsync(string linkDirection, string direction)
         {
-            using (UserDialogs.Instance.Loading($"Fetching Data... "))
+            using (_userDilaogsService.Loading($"Fetching Data... "))
             {
                 await GetWebBusStationsAsync(linkDirection, direction);
             }
@@ -243,7 +249,7 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task GetWebBusStationsAsync(string linkDirection, string direction)
         {
-            if (!IsInternetAvailable)
+            if (!_connectivityService.IsInternetAvailable)
             {
                 return;
             }
@@ -294,7 +300,7 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task DownloadAllStationsSchedualsAsync()
         {
-            if (!IsInternetAvailable)
+            if (!_connectivityService.IsInternetAvailable)
             {
                 return;
             }

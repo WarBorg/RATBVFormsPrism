@@ -17,9 +17,11 @@ namespace RATBVFormsPrism.ViewModels
     {
         #region Dependencies
 
-        private readonly INavigationService _navigationService;
         private readonly IBusDataService _busDataService;
         private readonly IBusWebService _busWebService;
+        private readonly IUserDialogs _userDilaogsService;
+        private readonly IConnectivityService _connectivityService;
+        private readonly INavigationService _navigationService;
 
         #endregion
 
@@ -93,10 +95,14 @@ namespace RATBVFormsPrism.ViewModels
 
         public BusLinesViewModel(IBusDataService busDataService,
                                  IBusWebService busWebService,
+                                 IUserDialogs userDialogsService,
+                                 IConnectivityService connectivityService,
                                  INavigationService navigationService)
         {
             _busDataService = busDataService;
             _busWebService = busWebService;
+            _userDilaogsService = userDialogsService;
+            _connectivityService = connectivityService;
             _navigationService = navigationService;
         }
         
@@ -122,7 +128,7 @@ namespace RATBVFormsPrism.ViewModels
             AllBusLines = new List<BusLineModel>();
 
             // ERROR Object not set to an instance of an object :|
-            //using (UserDialogs.Instance.Loading($"Fetching Data... "))
+            //using (_userDilaogsService.Loading($"Fetching Data... "))
             //{
                 // Create tables, if they already exist nothing will happen
                 await _busDataService.CreateAllTablesAsync();
@@ -148,7 +154,7 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task GetWebBusLinesAsync()
         {
-            if (!IsInternetAvailable)
+            if (!_connectivityService.IsInternetAvailable)
             {
                 return;
             }

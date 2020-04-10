@@ -20,6 +20,8 @@ namespace RATBVFormsPrism.ViewModels
 
         private readonly IBusDataService _busDataService;
         private readonly IBusWebService _busWebService;
+        private readonly IUserDialogs _userDilaogsService;
+        private readonly IConnectivityService _connectivityService;
 
         #endregion
 
@@ -109,10 +111,15 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Constructors
 
-        public BusTimeTableViewModel(IBusDataService busDataService, IBusWebService busWebService)
+        public BusTimeTableViewModel(IBusDataService busDataService,
+                                     IBusWebService busWebService,
+                                     IUserDialogs userDialogsService,
+                                     IConnectivityService connectivityService)
         {
             _busDataService = busDataService;
             _busWebService = busWebService;
+            _userDilaogsService = userDialogsService;
+            _connectivityService = connectivityService;
         }
         
         #endregion
@@ -166,7 +173,7 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task GetBusTimeTableWithLoadingScreenAsync(string schedualLink)
         {
-            using (UserDialogs.Instance.Loading($"Fetching Data... "))
+            using (_userDilaogsService.Loading($"Fetching Data... "))
             {
                 await GetWebBusTimeTableAsync(schedualLink);
             }
@@ -174,7 +181,7 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task GetWebBusTimeTableAsync(string schedualLink)
         {
-            if (!IsInternetAvailable)
+            if (!_connectivityService.IsInternetAvailable)
             {
                 return;
             }
