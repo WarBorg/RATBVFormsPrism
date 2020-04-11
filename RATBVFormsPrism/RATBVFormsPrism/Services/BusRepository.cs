@@ -60,11 +60,25 @@ namespace RATBVFormsPrism.Services
             }
         }
 
-        public async Task<List<BusStationModel>> GetBusStationsAsync(string lineNumberLink)
+        public async Task<List<BusStationModel>> GetBusStationsAsync(string lineNumberLink,
+                                                                     string direction,
+                                                                     int busLineId,
+                                                                     bool isForcedRefresh)
         {
             try
             {
-                return await _busApi.GetBusStations(lineNumberLink);
+                var busStationsCount = await _busDataService.CountBusStationsAsync(busLineId, direction);
+
+                if (isForcedRefresh || (busStationsCount == 0))
+                {
+                        var busStations = await _busApi.GetBusStations(lineNumberLink);
+
+                    var lastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+
+                    await InsertBusStationsInDatabaseAsync(busStations, direction, busLineId, lastUpdated);
+                }
+                
+                return await _busDataService.GetBusStationsByNameAsync(busLineId, direction);
             }
             catch (ValidationApiException validationException)
             {
@@ -102,6 +116,22 @@ namespace RATBVFormsPrism.Services
             busLines.ForEach(b => b.LastUpdateDate = lastUpdate);
 
             await _busDataService.InsertOrReplaceBusLinesAsync(busLines);
+        }
+
+        private async Task InsertBusStationsInDatabaseAsync(List<BusStationModel> busStations,
+                                                            string direction,
+                                                            int busLineId,
+                                                            string lastUpdate)
+        {
+            foreach (var busStation in busStations)
+            {
+                // Add foreign key and direction before inserting in database
+                busStation.BusLineId = busLineId;
+                busStation.Direction = direction;
+                busStation.LastUpdateDate = lastUpdate;
+            }
+
+            await _busDataService.InsertOrReplaceBusStationsAsync(busStations);
         }
 
         #endregion

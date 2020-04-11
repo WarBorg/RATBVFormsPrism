@@ -18,7 +18,7 @@ namespace RATBVFormsPrism.ViewModels
         #region Dependencies
 
         private readonly IBusDataService _busDataService;
-        private readonly IBusRepository _busWebService;
+        private readonly IBusRepository _busRepository;
         private readonly IUserDialogs _userDilaogsService;
         private readonly IConnectivityService _connectivityService;
         private readonly INavigationService _navigationService;
@@ -132,13 +132,13 @@ namespace RATBVFormsPrism.ViewModels
         #region Constructors
 
         public BusStationsViewModel(IBusDataService busDataService,
-                                    IBusRepository busWebService,
+                                    IBusRepository busRepository,
                                     IUserDialogs userDialogsService,
                                     IConnectivityService connectivityService,
                                     INavigationService navigationService)
         {
             _busDataService = busDataService;
-            _busWebService = busWebService;
+            _busRepository = busRepository;
             _userDilaogsService = userDialogsService;
             _connectivityService = connectivityService;
             _navigationService = navigationService;
@@ -148,11 +148,22 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Command Methods
 
-        private async void DoReverseCommand() => await GetBusStationsAsync(false, true);
+        private async void DoReverseCommand()
+        {
+            using (_userDilaogsService.Loading("Fetching Data... "))
+            {
+                await GetBusStationsAsync(isRefresh: false,
+                                          shouldReverseWay: true);
+            }
+        }
 
         private async void DoRefreshCommand()
         {
-            await GetBusStationsAsync(true);
+            if (_connectivityService.IsInternetAvailable)
+            {
+                await GetBusStationsAsync(isRefresh: true,
+                                          shouldReverseWay: false);
+            }
 
             IsBusy = false;
         }
@@ -182,36 +193,41 @@ namespace RATBVFormsPrism.ViewModels
                 BusLine = busline;
             }
 
-            await GetBusStationsAsync();
+            using (_userDilaogsService.Loading("Fetching Data... "))
+            {
+                await GetBusStationsAsync(isRefresh: false,
+                                          shouldReverseWay: false);
+            }
         }
 
         #endregion
 
         #region Methods
 
-        private async Task GetBusStationsAsync(bool isRefresh = false, bool isReverse = false)
+        private async Task GetBusStationsAsync(bool isRefresh, bool shouldReverseWay)
         {
             if (BusLine == null)
             {
                 return;
             }
 
+            // If there is a forced user refresh we want to keep the same Direction
             if (!isRefresh)
             {
                 // Initial view of the stations list should be normal way
-                if (!isReverse)
+                if (!shouldReverseWay)
                 {
                     Direction = RouteDirections.Normal;
 
                     _linkDirection = BusLine.LinkNormalWay;
                 }
-                else if (isReverse && Direction == RouteDirections.Normal)
+                else if (shouldReverseWay && Direction == RouteDirections.Normal)
                 {
                     Direction = RouteDirections.Reverse;
 
                     _linkDirection = BusLine.LinkReverseWay;
                 }
-                else if (isReverse && Direction == RouteDirections.Reverse)
+                else if (shouldReverseWay && Direction == RouteDirections.Reverse)
                 {
                     Direction = RouteDirections.Normal;
 
@@ -219,83 +235,16 @@ namespace RATBVFormsPrism.ViewModels
                 }
             }
 
-            var busStationsCount = await _busDataService.CountBusStationsAsync(BusLine.Id, Direction);
-
-            if (isRefresh || (busStationsCount == 0))
-            {
-                if (isRefresh)
-                {
-                    await GetWebBusStationsAsync(_linkDirection, Direction);
-                }
-                else
-                {
-                    await GetBusStationsWithLoadingScreenAsync(_linkDirection, Direction);
-                }
-
-            }
-            else
-            {
-                await GetLocalBusStationsAsync();
-            }
-        }
-
-        private async Task GetBusStationsWithLoadingScreenAsync(string linkDirection, string direction)
-        {
-            using (_userDilaogsService.Loading($"Fetching Data... "))
-            {
-                await GetWebBusStationsAsync(linkDirection, direction);
-            }
-        }
-
-        private async Task GetWebBusStationsAsync(string linkDirection, string direction)
-        {
-            if (!_connectivityService.IsInternetAvailable)
-            {
-                return;
-            }
-
-            var busStations = await _busWebService.GetBusStationsAsync(linkDirection);
-
-            if (busStations == null)
-            {
-                return;
-            }
-
-            LastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
-
-            await AddBusStationsToDatabaseAsync(busStations, direction);
-
-            BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService))
-                                     .ToList();
-        }
-
-        private async Task GetLocalBusStationsAsync()
-        {
-            var busStations = await _busDataService.GetBusStationsByNameAsync(BusLine.Id, Direction);
-
-            if (busStations == null)
-            {
-                return;
-            }
-
-            BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService))
-                                     .ToList();
+            var busStations = await _busRepository.GetBusStationsAsync(_linkDirection,
+                                                                       Direction,
+                                                                       BusLine.Id,
+                                                                       isRefresh);
 
             LastUpdated = busStations.FirstOrDefault()
                                      .LastUpdateDate;
-        }
 
-        private async Task AddBusStationsToDatabaseAsync(List<BusStationModel> busStations, string direction)
-        {
-            foreach (var busStation in busStations)
-            {
-                // Add foreign key and direction before inserting in database
-                busStation.BusLineId = BusLine.Id;
-                busStation.Direction = direction;
-                busStation.LastUpdateDate = LastUpdated;
-            }
-
-            await _busDataService.InsertOrReplaceBusStationsAsync(busStations);
+            BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService))
+                                     .ToList();
         }
 
         private async Task DownloadAllStationsSchedualsAsync()
@@ -309,7 +258,7 @@ namespace RATBVFormsPrism.ViewModels
 
             foreach (var busStation in BusStations)
             {
-                var busTimetables = await _busWebService.GetBusTimeTableAsync(busStation.SchedualLink);
+                var busTimetables = await _busRepository.GetBusTimeTableAsync(busStation.SchedualLink);
 
                 foreach (var busTimetableHour in busTimetables)
                 {

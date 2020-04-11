@@ -7,7 +7,10 @@ namespace RATBVFormsPrism.Interfaces
     public interface IBusRepository
     {
         Task<List<BusLineModel>> GetBusLinesAsync(bool isForcedRefresh);
-        Task<List<BusStationModel>> GetBusStationsAsync(string lineNumberLink);
+        Task<List<BusStationModel>> GetBusStationsAsync(string lineNumberLink,
+                                                        string direction,
+                                                        int busLineId,
+                                                        bool isForcedRefresh);
         Task<List<BusTimeTableModel>> GetBusTimeTableAsync(string schedualLink);
     }
 }
