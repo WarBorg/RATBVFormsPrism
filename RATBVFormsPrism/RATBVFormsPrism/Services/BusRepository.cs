@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RATBVData.Models.Models;
+using RATBVFormsPrism.Constants;
 using RATBVFormsPrism.Interfaces;
 using Refit;
 
@@ -60,25 +61,30 @@ namespace RATBVFormsPrism.Services
             }
         }
 
-        public async Task<List<BusStationModel>> GetBusStationsAsync(string lineNumberLink,
+        public async Task<List<BusStationModel>> GetBusStationsAsync(string directionLink,
                                                                      string direction,
                                                                      int busLineId,
                                                                      bool isForcedRefresh)
         {
             try
             {
-                var busStationsCount = await _busDataService.CountBusStationsAsync(busLineId, direction);
+                var busStationsCount = await _busDataService.CountBusStationsAsync(busLineId,
+                                                                                   direction);
 
-                if (isForcedRefresh || (busStationsCount == 0))
+                if (isForcedRefresh || busStationsCount == 0)
                 {
-                        var busStations = await _busApi.GetBusStations(lineNumberLink);
+                    var busStations = await _busApi.GetBusStations(directionLink);
 
                     var lastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
 
-                    await InsertBusStationsInDatabaseAsync(busStations, direction, busLineId, lastUpdated);
+                    await InsertBusStationsInDatabaseAsync(busStations,
+                                                           direction,
+                                                           busLineId,
+                                                           lastUpdated);
                 }
                 
-                return await _busDataService.GetBusStationsByNameAsync(busLineId, direction);
+                return await _busDataService.GetBusStationsByNameAsync(busLineId,
+                                                                       direction);
             }
             catch (ValidationApiException validationException)
             {
@@ -90,11 +96,26 @@ namespace RATBVFormsPrism.Services
             }
         }
 
-        public async Task<List<BusTimeTableModel>> GetBusTimeTableAsync(string schedualLink)
+        public async Task<List<BusTimeTableModel>> GetBusTimeTableAsync(string schedualLink,
+                                                                        int busStationId,
+                                                                        bool isForcedRefresh)
         {
             try
             {
-                return await _busApi.GetBusTimeTables(schedualLink);
+                var busTimeTableCount = await _busDataService.CountBusTimeTableAsync(busStationId);
+
+                if (isForcedRefresh || busTimeTableCount == 0)
+                {
+                    var busTimetables = await _busApi.GetBusTimeTables(schedualLink);
+
+                    var lastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+
+                    await InsertBusStationsInDatabaseAsync(busTimetables,
+                                                           busStationId,
+                                                           lastUpdated);
+                }
+
+                return await _busDataService.GetBusTimeTableByBusStationId(busStationId);
             }
             catch (ValidationApiException validationException)
             {
@@ -103,6 +124,35 @@ namespace RATBVFormsPrism.Services
             catch (ApiException exception)
             {
                 throw exception;
+            }
+        }
+
+        public async Task DownloadAllStationsSchedualsAsync(string normalDirectionLink,
+                                                            string reverseDirectionLink,
+                                                            int busLineId)
+        {
+            var busStationsNormalWay = await GetBusStationsAsync(normalDirectionLink,
+                                                                 RouteDirections.Normal,
+                                                                 busLineId,
+                                                                 isForcedRefresh: true);
+
+            foreach (var busStation in busStationsNormalWay)
+            {
+                await GetBusTimeTableAsync(busStation.SchedualLink,
+                                           busStation.Id.Value,
+                                           isForcedRefresh: true);
+            }
+
+            var busStationsReverseWay = await GetBusStationsAsync(reverseDirectionLink,
+                                                                  RouteDirections.Reverse,
+                                                                  busLineId,
+                                                                  isForcedRefresh: true);
+
+            foreach (var busStation in busStationsReverseWay)
+            {
+                await GetBusTimeTableAsync(busStation.SchedualLink,
+                                           busStation.Id.Value,
+                                           isForcedRefresh: true);
             }
         }
 
@@ -132,6 +182,20 @@ namespace RATBVFormsPrism.Services
             }
 
             await _busDataService.InsertOrReplaceBusStationsAsync(busStations);
+        }
+
+        private async Task InsertBusStationsInDatabaseAsync(List<BusTimeTableModel> busTimeTables,
+                                                            int busStationId,
+                                                            string lastUpdate)
+        {
+            foreach (var busTimetableHour in busTimeTables)
+            {
+                // Add foreign key before inserting in database
+                busTimetableHour.BusStationId = busStationId;
+                busTimetableHour.LastUpdateDate = lastUpdate;
+            }
+
+            await _busDataService.InsertOrReplaceBusTimeTablesAsync(busTimeTables);
         }
 
         #endregion
