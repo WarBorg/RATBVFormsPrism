@@ -184,6 +184,11 @@ namespace RATBVFormsPrism.ViewModels
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
+            if (parameters.GetNavigationMode() == NavigationMode.Back)
+            {
+                return;
+            }
+
             // On back request the parameter comes null
             //TODO use JSON serialization when sending data between pages
             if (parameters[AppNavigation.BusLine] is BusLineModel busline)

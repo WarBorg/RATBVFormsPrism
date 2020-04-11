@@ -123,11 +123,16 @@ namespace RATBVFormsPrism.ViewModels
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
+            if (parameters.GetNavigationMode() == NavigationMode.Back)
+            {
+                return;
+            }
+
             // ERROR Object not set to an instance of an object :|
             //using (_userDilaogsService.Loading("Fetching Data... "))
             //{
-                // Create tables, if they already exist nothing will happen
-                await _busDataService.CreateAllTablesAsync();
+            // Create tables, if they already exist nothing will happen
+            await _busDataService.CreateAllTablesAsync();
 
                 await GetBusLinesAsync(isForcedRefresh: false);
             //}
