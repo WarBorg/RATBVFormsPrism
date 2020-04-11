@@ -51,7 +51,7 @@ namespace RATBVFormsPrism
 
             containerRegistry.Register<IConnectivityService, ConnectivityService>();
             containerRegistry.Register<IBusDataService, BusDataService>();
-            containerRegistry.Register<IBusWebService, BusWebService>();
+            containerRegistry.Register<IBusRepository, BusRepository>();
 
             containerRegistry.RegisterInstance<IUserDialogs>(UserDialogs.Instance);
             containerRegistry.RegisterInstance<IBusApi>(

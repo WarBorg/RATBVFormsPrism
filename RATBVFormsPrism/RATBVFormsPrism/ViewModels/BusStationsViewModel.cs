@@ -18,7 +18,7 @@ namespace RATBVFormsPrism.ViewModels
         #region Dependencies
 
         private readonly IBusDataService _busDataService;
-        private readonly IBusWebService _busWebService;
+        private readonly IBusRepository _busWebService;
         private readonly IUserDialogs _userDilaogsService;
         private readonly IConnectivityService _connectivityService;
         private readonly INavigationService _navigationService;
@@ -132,7 +132,7 @@ namespace RATBVFormsPrism.ViewModels
         #region Constructors
 
         public BusStationsViewModel(IBusDataService busDataService,
-                                    IBusWebService busWebService,
+                                    IBusRepository busWebService,
                                     IUserDialogs userDialogsService,
                                     IConnectivityService connectivityService,
                                     INavigationService navigationService)
@@ -168,7 +168,7 @@ namespace RATBVFormsPrism.ViewModels
 
             _userDilaogsService.Toast("Download complete for all bus stations");
         }
-        
+
         #endregion
 
         #region Navigation Methods

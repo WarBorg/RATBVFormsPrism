@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ namespace RATBVFormsPrism.ViewModels
         #region Dependencies
 
         private readonly IBusDataService _busDataService;
-        private readonly IBusWebService _busWebService;
+        private readonly IBusRepository _busRepository;
         private readonly IUserDialogs _userDilaogsService;
         private readonly IConnectivityService _connectivityService;
         private readonly INavigationService _navigationService;
@@ -27,8 +26,6 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Properties
 
-        public List<BusLineModel> AllBusLines { get; private set; }
-        
         private List<BusLineViewModel> _busLines;
         public List<BusLineViewModel> BusLines
         {
@@ -94,13 +91,13 @@ namespace RATBVFormsPrism.ViewModels
         #region Constructors
 
         public BusLinesViewModel(IBusDataService busDataService,
-                                 IBusWebService busWebService,
+                                 IBusRepository busRepository,
                                  IUserDialogs userDialogsService,
                                  IConnectivityService connectivityService,
                                  INavigationService navigationService)
         {
             _busDataService = busDataService;
-            _busWebService = busWebService;
+            _busRepository = busRepository;
             _userDilaogsService = userDialogsService;
             _connectivityService = connectivityService;
             _navigationService = navigationService;
@@ -111,10 +108,11 @@ namespace RATBVFormsPrism.ViewModels
         #region Command Methods
 
         private async void DoRefreshCommand()
-        { 
-            await GetWebBusLinesAsync();
-
-            await AddBusLinesToDatabaseAsync();
+        {
+            if (_connectivityService.IsInternetAvailable)
+            {
+                await GetBusLinesAsync(isForcedRefresh: true);
+            }
 
             IsBusy = false;
         }
@@ -125,26 +123,13 @@ namespace RATBVFormsPrism.ViewModels
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
-            AllBusLines = new List<BusLineModel>();
-
             // ERROR Object not set to an instance of an object :|
             //using (_userDilaogsService.Loading($"Fetching Data... "))
             //{
                 // Create tables, if they already exist nothing will happen
                 await _busDataService.CreateAllTablesAsync();
 
-                var busLinesNumber = await _busDataService.CountBusLines;
-
-                if (busLinesNumber == 0)
-                {
-                    await GetWebBusLinesAsync();
-
-                    await AddBusLinesToDatabaseAsync();
-                }
-                else
-                {
-                    await GetLocalBusLinesAsync();
-                }
+                await GetBusLinesAsync(isForcedRefresh: false);
             //}
         }
 
@@ -152,51 +137,27 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Methods
 
-        private async Task GetWebBusLinesAsync()
+        private async Task GetBusLinesAsync(bool isForcedRefresh)
         {
-            if (!_connectivityService.IsInternetAvailable)
-            {
-                return;
-            }
+            var busLines = await _busRepository.GetBusLinesAsync(isForcedRefresh);
 
-            AllBusLines = await _busWebService.GetBusLinesAsync();
+            LastUpdated = busLines.FirstOrDefault()
+                                  .LastUpdateDate;
 
-            GetBusLinesByType();
-
-            LastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+            GetBusLinesByType(busLines);
         }
 
-        private async Task GetLocalBusLinesAsync()
+        private void GetBusLinesByType(List<BusLineModel> busLines)
         {
-            AllBusLines = await _busDataService.GetBusLinesByNameAsync();
-
-            GetBusLinesByType();
-
-            LastUpdated = AllBusLines.FirstOrDefault()
-                                     .LastUpdateDate;
-        }
-
-        private void GetBusLinesByType()
-        {
-            BusLines = AllBusLines.Where(bl => bl.Type == BusTypes.Bus.ToString())
-                                  .Select(busLine => new BusLineViewModel(busLine, _navigationService))
-                                  .ToList();
-            MidiBusLines = AllBusLines.Where(bl => bl.Type == BusTypes.Midibus.ToString())
+            BusLines = busLines.Where(bl => bl.Type == BusTypes.Bus.ToString())
+                               .Select(busLine => new BusLineViewModel(busLine, _navigationService))
+                               .ToList();
+            MidiBusLines = busLines.Where(bl => bl.Type == BusTypes.Midibus.ToString())
+                                   .Select(busLine => new BusLineViewModel(busLine, _navigationService))
+                                   .ToList();
+            TrolleybusLines = busLines.Where(bl => bl.Type == BusTypes.Trolleybus.ToString())
                                       .Select(busLine => new BusLineViewModel(busLine, _navigationService))
                                       .ToList();
-            TrolleybusLines = AllBusLines.Where(bl => bl.Type == BusTypes.Trolleybus.ToString())
-                                         .Select(busLine => new BusLineViewModel(busLine, _navigationService))
-                                         .ToList();
-        }
-
-        private async Task AddBusLinesToDatabaseAsync()
-        {
-            foreach (var busLine in AllBusLines)
-            {
-                busLine.LastUpdateDate = LastUpdated;
-            }
-
-            await _busDataService.InsertOrReplaceBusLinesAsync(AllBusLines);
         }
 
         #endregion

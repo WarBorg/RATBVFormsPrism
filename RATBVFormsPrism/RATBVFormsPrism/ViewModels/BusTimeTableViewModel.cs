@@ -19,7 +19,7 @@ namespace RATBVFormsPrism.ViewModels
         #region Dependencies
 
         private readonly IBusDataService _busDataService;
-        private readonly IBusWebService _busWebService;
+        private readonly IBusRepository _busWebService;
         private readonly IUserDialogs _userDilaogsService;
         private readonly IConnectivityService _connectivityService;
 
@@ -112,7 +112,7 @@ namespace RATBVFormsPrism.ViewModels
         #region Constructors
 
         public BusTimeTableViewModel(IBusDataService busDataService,
-                                     IBusWebService busWebService,
+                                     IBusRepository busWebService,
                                      IUserDialogs userDialogsService,
                                      IConnectivityService connectivityService)
         {
@@ -121,7 +121,7 @@ namespace RATBVFormsPrism.ViewModels
             _userDilaogsService = userDialogsService;
             _connectivityService = connectivityService;
         }
-        
+
         #endregion
 
         #region Command Methods

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Interfaces;
@@ -6,38 +7,56 @@ using Refit;
 
 namespace RATBVFormsPrism.Services
 {
-    public class BusWebService : IBusWebService
+    public class BusRepository : IBusRepository
     {
         #region Dependencies
 
         private readonly IBusApi _busApi;
+        private readonly IBusDataService _busDataService;
 
         #endregion
 
         #region Constructors
 
-        public BusWebService(IBusApi busApi)
+        public BusRepository(IBusApi busApi,
+                             IBusDataService busDataService)
         {
             _busApi = busApi;
+            _busDataService = busDataService;
         }
 
         #endregion
 
         #region IBusWebService Methods
 
-        public async Task<List<BusLineModel>> GetBusLinesAsync()
+        public async Task<List<BusLineModel>> GetBusLinesAsync(bool isForcedRefresh)
         {
             try
             {
-                return await _busApi.GetBusLines();
+                var busLinesNumber = await _busDataService.CountBusLines;
+
+                if (isForcedRefresh || busLinesNumber == 0)
+                {
+                    var busLines = await _busApi.GetBusLines();
+
+                    var lastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
+
+                    await InsertBusLinesInDatabaseAsync(busLines, lastUpdated);
+                }
+
+                return await _busDataService.GetBusLinesByNameAsync();
             }
             catch (ValidationApiException validationException)
             {
                 throw validationException;
             }
-            catch (ApiException exception)
+            catch (ApiException apiException)
             {
-                throw exception;
+                throw apiException;
+            }
+            catch (Exception exeption)
+            {
+                throw exeption;
             }
         }
 
@@ -71,6 +90,18 @@ namespace RATBVFormsPrism.Services
             {
                 throw exception;
             }
+        }
+
+        #endregion
+
+        #region Methods
+
+        private async Task InsertBusLinesInDatabaseAsync(List<BusLineModel> busLines,
+                                                         string lastUpdate)
+        {
+            busLines.ForEach(b => b.LastUpdateDate = lastUpdate);
+
+            await _busDataService.InsertOrReplaceBusLinesAsync(busLines);
         }
 
         #endregion
