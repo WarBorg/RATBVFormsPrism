@@ -90,9 +90,13 @@ namespace RATBVFormsPrism.Services
             {
                 throw validationException;
             }
-            catch (ApiException exception)
+            catch (ApiException apiException)
             {
-                throw exception;
+                throw apiException;
+            }
+            catch (Exception exeption)
+            {
+                throw exeption;
             }
         }
 
@@ -121,9 +125,13 @@ namespace RATBVFormsPrism.Services
             {
                 throw validationException;
             }
-            catch (ApiException exception)
+            catch (ApiException apiException)
             {
-                throw exception;
+                throw apiException;
+            }
+            catch (Exception exeption)
+            {
+                throw exeption;
             }
         }
 
@@ -131,28 +139,43 @@ namespace RATBVFormsPrism.Services
                                                             string reverseDirectionLink,
                                                             int busLineId)
         {
-            var busStationsNormalWay = await GetBusStationsAsync(normalDirectionLink,
-                                                                 RouteDirections.Normal,
-                                                                 busLineId,
-                                                                 isForcedRefresh: true);
-
-            foreach (var busStation in busStationsNormalWay)
+            try
             {
-                await GetBusTimeTableAsync(busStation.SchedualLink,
-                                           busStation.Id.Value,
-                                           isForcedRefresh: true);
+                var busStationsNormalWay = await GetBusStationsAsync(normalDirectionLink,
+                                                                     RouteDirections.Normal,
+                                                                     busLineId,
+                                                                     isForcedRefresh: true);
+
+                foreach (var busStation in busStationsNormalWay)
+                {
+                    await GetBusTimeTableAsync(busStation.SchedualLink,
+                                               busStation.Id.Value,
+                                               isForcedRefresh: true);
+                }
+
+                var busStationsReverseWay = await GetBusStationsAsync(reverseDirectionLink,
+                                                                      RouteDirections.Reverse,
+                                                                      busLineId,
+                                                                      isForcedRefresh: true);
+
+                foreach (var busStation in busStationsReverseWay)
+                {
+                    await GetBusTimeTableAsync(busStation.SchedualLink,
+                                               busStation.Id.Value,
+                                               isForcedRefresh: true);
+                }
             }
-
-            var busStationsReverseWay = await GetBusStationsAsync(reverseDirectionLink,
-                                                                  RouteDirections.Reverse,
-                                                                  busLineId,
-                                                                  isForcedRefresh: true);
-
-            foreach (var busStation in busStationsReverseWay)
+            catch (ValidationApiException validationException)
             {
-                await GetBusTimeTableAsync(busStation.SchedualLink,
-                                           busStation.Id.Value,
-                                           isForcedRefresh: true);
+                throw validationException;
+            }
+            catch (ApiException apiException)
+            {
+                throw apiException;
+            }
+            catch (Exception exeption)
+            {
+                throw exeption;
             }
         }
 
