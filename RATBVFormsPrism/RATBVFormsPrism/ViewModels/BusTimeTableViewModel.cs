@@ -127,6 +127,10 @@ namespace RATBVFormsPrism.ViewModels
             {
                 await GetBusTimeTableAsync(isForcedRefresh: true);
             }
+            else
+            {
+                _userDilaogsService.Toast("No Internet connection detected");
+            }
 
             IsBusy = false;
         }

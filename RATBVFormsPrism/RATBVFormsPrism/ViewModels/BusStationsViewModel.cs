@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -154,6 +153,10 @@ namespace RATBVFormsPrism.ViewModels
             {
                 await GetBusStationsAsync(isRefresh: true,
                                           shouldReverseWay: false);
+            }
+            else
+            {
+                _userDilaogsService.Toast("No Internet connection detected");
             }
 
             IsBusy = false;

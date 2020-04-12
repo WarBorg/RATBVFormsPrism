@@ -113,6 +113,10 @@ namespace RATBVFormsPrism.ViewModels
             {
                 await GetBusLinesAsync(isForcedRefresh: true);
             }
+            else
+            {
+                _userDilaogsService.Toast("No Internet connection detected");
+            }
 
             IsBusy = false;
         }
@@ -132,7 +136,7 @@ namespace RATBVFormsPrism.ViewModels
             //using (_userDilaogsService.Loading("Fetching Data... "))
             //{
             // Create tables, if they already exist nothing will happen
-            await _busDataService.CreateAllTablesAsync();
+                await _busDataService.CreateAllTablesAsync();
 
                 await GetBusLinesAsync(isForcedRefresh: false);
             //}

@@ -15,7 +15,6 @@ namespace RATBVFormsPrism.Tests.Services
         #region Fields
 
         private IFixture _fixture;
-        private Mock<IUserDialogs> _userDialogsServiceMock;
         private Mock<IConnectivity> _connectivityServiceMock;
         
         #endregion
@@ -29,7 +28,6 @@ namespace RATBVFormsPrism.Tests.Services
 
             _fixture.Customize(new AutoMoqCustomization());
 
-            _userDialogsServiceMock = new Mock<IUserDialogs>();
             _connectivityServiceMock = new Mock<IConnectivity>();
         }
 
@@ -41,11 +39,10 @@ namespace RATBVFormsPrism.Tests.Services
         public void ShouldReturnThatInternetIsAvailable()
         {
             // Arrange
-            _connectivityServiceMock.SetupGet(c => c.NetworkAccess)
+            _connectivityServiceMock.SetupGet(s => s.NetworkAccess)
                                     .Returns(NetworkAccess.Internet);
 
             _fixture.Inject(_connectivityServiceMock);
-            _fixture.Inject(_userDialogsServiceMock);
 
             var expectedIsInternetAvailableResult = true;
 
@@ -56,8 +53,6 @@ namespace RATBVFormsPrism.Tests.Services
 
             // Assert
             Assert.That(isInternetAvailale, Is.EqualTo(expectedIsInternetAvailableResult));
-
-            _userDialogsServiceMock.Verify(s => s.Toast(It.IsAny<string>(), default), Times.Never);
         }
 
         [Test]
@@ -71,8 +66,7 @@ namespace RATBVFormsPrism.Tests.Services
             _connectivityServiceMock.SetupGet(c => c.NetworkAccess)
                                     .Returns(networkAccess);
 
-            _fixture.Inject(_connectivityServiceMock);
-            _fixture.Inject(_userDialogsServiceMock);
+            _fixture.Inject(_connectivityServiceMock);            
 
             var expectedIsInternetAvailableResult = false;
 
@@ -82,9 +76,7 @@ namespace RATBVFormsPrism.Tests.Services
             var isInternetAvailale = SUT.IsInternetAvailable;
 
             // Assert
-            Assert.That(isInternetAvailale, Is.EqualTo(expectedIsInternetAvailableResult));
-
-            _userDialogsServiceMock.Verify(s => s.Toast(It.IsAny<string>(), default), Times.Once);
+            Assert.That(isInternetAvailale, Is.EqualTo(expectedIsInternetAvailableResult));            
         }
 
         #endregion

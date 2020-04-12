@@ -10,36 +10,23 @@ namespace RATBVFormsPrism.Services
         #region Dependencies
 
         private readonly IConnectivity _connectivity;
-        private readonly IUserDialogs _userDialogs;
-
+        
         #endregion
 
         #region IConnectivityService Properties
 
         public bool IsInternetAvailable
         {
-            get
-            {
-                if (_connectivity.NetworkAccess != NetworkAccess.Internet)
-                {
-                    _userDialogs.Toast("No Internet connection detected");
-
-                    return false;
-                }
-
-                return true;
-            }
+            get => _connectivity.NetworkAccess == NetworkAccess.Internet;
         }
 
         #endregion
 
         #region Constrctors
 
-        public ConnectivityService(IConnectivity connectivity,
-                                   IUserDialogs userDialogs)
+        public ConnectivityService(IConnectivity connectivity)
         {
             _connectivity = connectivity;
-            _userDialogs = userDialogs;
         }
 
         #endregion
