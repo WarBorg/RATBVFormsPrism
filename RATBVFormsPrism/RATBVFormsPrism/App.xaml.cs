@@ -1,4 +1,5 @@
 ﻿using Acr.UserDialogs;
+using Prism;
 using Prism.Ioc;
 using Prism.Unity;
 using RATBVFormsPrism.Services;
@@ -13,7 +14,22 @@ namespace RATBVFormsPrism
 {
     public partial class App : PrismApplication
     {
+        #region Fields
+
         private bool _isWebApiServerLocal = false;
+
+        #endregion
+
+        #region Constructor
+
+        public App(IPlatformInitializer initializer)
+        : base(initializer)
+        {
+        }
+
+        #endregion
+
+        #region Override Methods
 
         protected override async void OnInitialized()
         {
@@ -44,11 +60,11 @@ namespace RATBVFormsPrism
                 containerRegistry.Register<ICustomHttpMessageHandler, DefaultHttpMessageHandler>();
             }
 
+            containerRegistry.RegisterSingleton<IBusDataService, BusDataService>();
+
             containerRegistry.Register<IHttpService, HttpService>();
             containerRegistry.Register<IConnectivity, ConnectivityImplementation>();
-
             containerRegistry.Register<IConnectivityService, ConnectivityService>();
-            containerRegistry.Register<IBusDataService, BusDataService>();
             containerRegistry.Register<IBusRepository, BusRepository>();
 
             containerRegistry.RegisterInstance<IUserDialogs>(UserDialogs.Instance);
@@ -76,5 +92,7 @@ namespace RATBVFormsPrism
         {
             base.OnResume();
         }
+
+        #endregion
     }
 }

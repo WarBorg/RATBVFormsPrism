@@ -1,6 +1,4 @@
-﻿using Acr.UserDialogs;
-using RATBVFormsPrism.Services;
-using Xamarin.Essentials;
+﻿using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 
 namespace RATBVFormsPrism.Services

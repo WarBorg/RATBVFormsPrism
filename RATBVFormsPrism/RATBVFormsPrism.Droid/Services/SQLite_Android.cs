@@ -1,14 +1,11 @@
 using System;
 using System.IO;
-using RATBVFormsPrism.Droid.Services;
 using RATBVFormsPrism.Services;
 using SQLite;
-using Xamarin.Forms;
 
-[assembly: Dependency(typeof(SQLite_Android))]
 namespace RATBVFormsPrism.Droid.Services
 {
-    public class SQLite_Android : ISQLite
+    public class SQLite_Android : ISQLiteService
 	{
         #region ISQLite Methods
 

@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using RATBVData.Models.Models;
 using SQLite;
-using Xamarin.Forms;
 
 namespace RATBVFormsPrism.Services
 {
@@ -20,12 +19,11 @@ namespace RATBVFormsPrism.Services
 
         #region Constructors
 
-        public BusDataService()
+        public BusDataService(ISQLiteService sqlite)
         {
             string sqliteFilename = "ratbvPrism.sql";
 
-            _asyncConnection = DependencyService.Get<ISQLite>()
-                                                .GetAsyncConnection(sqliteFilename);
+            _asyncConnection = sqlite.GetAsyncConnection(sqliteFilename);
         }
 
         #endregion
@@ -242,7 +240,7 @@ namespace RATBVFormsPrism.Services
 
         #region Insert / Delete Methods
 
-        public async Task<int> InsertOrReplaceAllAsync(IEnumerable items,
+        private async Task<int> InsertOrReplaceAllAsync(IEnumerable items,
                                                        CancellationToken cancellationToken = default)
         {
             if (items == null)

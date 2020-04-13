@@ -2,7 +2,7 @@
 
 namespace RATBVFormsPrism.Services
 {
-    public interface ISQLite
+    public interface ISQLiteService
     {
         SQLiteConnection GetConnection(string databaseName);
         SQLiteAsyncConnection GetAsyncConnection(string databaseName);

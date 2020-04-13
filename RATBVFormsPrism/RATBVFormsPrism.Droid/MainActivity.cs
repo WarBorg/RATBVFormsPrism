@@ -18,7 +18,7 @@ namespace RATBVFormsPrism.Droid
             Xamarin.Essentials.Platform.Init(this, bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             UserDialogs.Init(this);
-            LoadApplication(new App());
+            LoadApplication(new App(new AndroidPlatformInitializer()));
         }
 
         public override void OnRequestPermissionsResult(int requestCode,

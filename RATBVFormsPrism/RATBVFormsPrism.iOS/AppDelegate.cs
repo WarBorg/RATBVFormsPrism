@@ -20,7 +20,7 @@ namespace RATBVFormsPrism.iOS
         {
             global::Xamarin.Forms.Forms.Init();
 
-            LoadApplication(new App());
+            LoadApplication(new App(new IOSPlatformInitializer()));
 
             return base.FinishedLaunching(app, options);
         }
