@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
-using RATBVFormsPrism.Interfaces;
 using Refit;
 
 namespace RATBVFormsPrism.Services

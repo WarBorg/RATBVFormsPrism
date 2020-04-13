@@ -18,4 +18,30 @@
   <ItemGroup>
     <ProjectReference Include="..\..\RATBVData\RATBVData.Models\RATBVData.Models.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\BusDataService.cs">
+      <DependentUpon>IBusDataService.cs</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\BusRepository.cs">
+      <DependentUpon>IBusRepository.cs</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\ConnectivityService.cs">
+      <DependentUpon>IConnectivityService.cs</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\DefaultHttpMessageHandler.cs">
+      <DependentUpon>ICustomHttpMessageHandler.cs</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\InsecureHttpMessageHandler.cs">
+      <DependentUpon>ICustomHttpMessageHandler.cs</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\DefaultHttpServiceOptions.cs">
+      <DependentUpon>IHttpServiceOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\LocalHttpServiceOptions.cs">
+      <DependentUpon>IHttpServiceOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\HttpService.cs">
+      <DependentUpon>IHttpService.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

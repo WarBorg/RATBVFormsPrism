@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RATBVFormsPrism.Interfaces
+namespace RATBVFormsPrism.Services
 {
     public interface IHttpServiceOptions
     {

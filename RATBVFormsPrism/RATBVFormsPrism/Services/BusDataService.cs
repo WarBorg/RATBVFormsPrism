@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using RATBVData.Models.Models;
-using RATBVFormsPrism.Interfaces;
 using SQLite;
 using Xamarin.Forms;
 

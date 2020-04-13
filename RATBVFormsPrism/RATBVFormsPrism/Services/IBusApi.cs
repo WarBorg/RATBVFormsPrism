@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using RATBVData.Models.Models;
 using Refit;
 
-namespace RATBVFormsPrism.Interfaces
+namespace RATBVFormsPrism.Services
 {
     public interface IBusApi
     {

@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 
-namespace RATBVFormsPrism.Interfaces
+namespace RATBVFormsPrism.Services
 {
     public interface IHttpService
     {

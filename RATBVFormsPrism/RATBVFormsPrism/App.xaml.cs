@@ -1,8 +1,6 @@
 ﻿using Acr.UserDialogs;
-using Prism;
 using Prism.Ioc;
 using Prism.Unity;
-using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.Services;
 using RATBVFormsPrism.Views;
 using Refit;

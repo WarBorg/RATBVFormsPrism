@@ -7,7 +7,7 @@ using Prism.Commands;
 using Prism.Navigation;
 using RATBVData.Models.Enums;
 using RATBVData.Models.Models;
-using RATBVFormsPrism.Interfaces;
+using RATBVFormsPrism.Services;
 using Xamarin.Forms;
 
 namespace RATBVFormsPrism.ViewModels
@@ -108,7 +108,7 @@ namespace RATBVFormsPrism.ViewModels
             _connectivityService = connectivityService;
             _navigationService = navigationService;
         }
-        
+
         #endregion
 
         #region Command Methods
@@ -142,9 +142,9 @@ namespace RATBVFormsPrism.ViewModels
             //using (_userDilaogsService.Loading("Fetching Data... "))
             //{
             // Create tables, if they already exist nothing will happen
-                await _busDataService.CreateAllTablesAsync();
+            await _busDataService.CreateAllTablesAsync();
 
-                await GetBusLinesAsync(isForcedRefresh: false);
+            await GetBusLinesAsync(isForcedRefresh: false);
             //}
         }
 

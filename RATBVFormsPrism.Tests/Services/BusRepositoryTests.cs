@@ -9,7 +9,6 @@ using AutoFixture.AutoMoq;
 using Moq;
 using NUnit.Framework;
 using RATBVData.Models.Models;
-using RATBVFormsPrism.Interfaces;
 using RATBVFormsPrism.Services;
 using Refit;
 

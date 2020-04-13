@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using RATBVData.Models.Models;
 
-namespace RATBVFormsPrism.Interfaces
+namespace RATBVFormsPrism.Services
 {
     public interface IBusDataService
     {

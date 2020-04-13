@@ -1,5 +1,4 @@
-﻿using Acr.UserDialogs;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoFixture.AutoMoq;
 using Moq;
 using NUnit.Framework;

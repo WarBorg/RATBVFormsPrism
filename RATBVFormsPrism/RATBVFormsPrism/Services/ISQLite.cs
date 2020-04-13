@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace RATBVFormsPrism.Interfaces
+namespace RATBVFormsPrism.Services
 {
     public interface ISQLite
     {

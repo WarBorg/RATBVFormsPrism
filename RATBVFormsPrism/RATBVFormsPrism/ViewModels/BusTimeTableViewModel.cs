@@ -8,7 +8,7 @@ using Prism.Navigation;
 using RATBVData.Models.Enums;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
-using RATBVFormsPrism.Interfaces;
+using RATBVFormsPrism.Services;
 using Xamarin.Forms;
 
 namespace RATBVFormsPrism.ViewModels

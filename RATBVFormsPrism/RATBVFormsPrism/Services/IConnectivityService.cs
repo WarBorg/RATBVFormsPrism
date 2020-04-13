@@ -1,4 +1,4 @@
-﻿namespace RATBVFormsPrism.Interfaces
+﻿namespace RATBVFormsPrism.Services
 {
     public interface IConnectivityService
     {
