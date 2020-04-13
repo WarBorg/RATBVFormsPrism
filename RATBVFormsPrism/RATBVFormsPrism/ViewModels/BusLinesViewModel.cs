@@ -24,6 +24,12 @@ namespace RATBVFormsPrism.ViewModels
 
         #endregion
 
+        #region Fields
+
+        private bool _isGettingData = false;
+
+        #endregion
+
         #region Properties
 
         private List<BusLineViewModel> _busLines;
@@ -148,12 +154,23 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task GetBusLinesAsync(bool isForcedRefresh)
         {
+            // Used because IsBusy is in sync the with Refresh Command and it will refresh all three tabs
+            // making the call to the server three times
+            if (_isGettingData)
+            {
+                return;
+            }
+
+            _isGettingData = true;
+
             var busLines = await _busRepository.GetBusLinesAsync(isForcedRefresh);
 
             LastUpdated = busLines.FirstOrDefault()
                                   .LastUpdateDate;
 
             GetBusLinesByType(busLines);
+
+            _isGettingData = false;
         }
 
         private void GetBusLinesByType(List<BusLineModel> busLines)

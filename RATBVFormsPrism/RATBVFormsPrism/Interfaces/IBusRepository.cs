@@ -17,8 +17,8 @@ namespace RATBVFormsPrism.Interfaces
                                                            int busStationId,
                                                            bool isForcedRefresh);
 
-        Task DownloadAllStationsSchedualsAsync(string normalDirectionLink,
-                                               string reverseDirectionLink,
-                                               int busLineId);
+        Task DownloadAllStationsTimetablesAsync(string normalDirectionLink,
+                                                string reverseDirectionLink,
+                                                int busLineId);
     }
 }

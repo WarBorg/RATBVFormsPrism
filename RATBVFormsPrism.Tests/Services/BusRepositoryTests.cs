@@ -97,7 +97,9 @@ namespace RATBVFormsPrism.Tests.Services
 
             _busApiMock.Verify(a => a.GetBusLines(), Times.Once);
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusLinesAsync(It.Is<List<BusLineModel>>(l => l.Count == expectedBusLineCount)),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusLinesAsync(
+                                                It.Is<List<BusLineModel>>(
+                                                    l => l.Count == expectedBusLineCount)),
                                        Times.Once);
         }
 
@@ -130,7 +132,8 @@ namespace RATBVFormsPrism.Tests.Services
 
             _busApiMock.Verify(a => a.GetBusLines(), Times.Never);
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusLinesAsync(It.IsAny<List<BusLineModel>>()),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusLinesAsync(
+                                                It.IsAny<IEnumerable<BusLineModel>>()),
                                        Times.Never);
             
         }
@@ -172,7 +175,8 @@ namespace RATBVFormsPrism.Tests.Services
             var exeption = Assert.ThrowsAsync(Is.TypeOf(exceptionType),
                                               async () => await SUT.GetBusLinesAsync(isForcedRefresh: true));
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusLinesAsync(It.IsAny<List<BusLineModel>>()),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusLinesAsync(
+                                                It.IsAny<IEnumerable<BusLineModel>>()),
                                        Times.Never);
         }
 
@@ -194,7 +198,8 @@ namespace RATBVFormsPrism.Tests.Services
                                               async () => await SUT.GetBusLinesAsync(isForcedRefresh: true),
                                               expectedExceptionMessage);
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusLinesAsync(It.IsAny<List<BusLineModel>>()),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusLinesAsync(
+                                                It.IsAny<IEnumerable<BusLineModel>>()),
                                        Times.Never);
         }
 
@@ -240,7 +245,9 @@ namespace RATBVFormsPrism.Tests.Services
 
             _busApiMock.Verify(a => a.GetBusStations(It.IsAny<string>()), Times.Once);
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(It.Is<List<BusStationModel>>(l => l.Count == expectedBusStationsCount)),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(
+                                                It.Is<List<BusStationModel>>(
+                                                    l => l.Count == expectedBusStationsCount)),
                                        Times.Once);
         }
 
@@ -277,7 +284,8 @@ namespace RATBVFormsPrism.Tests.Services
 
             _busApiMock.Verify(a => a.GetBusStations(It.IsAny<string>()), Times.Never);
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(It.IsAny<List<BusStationModel>>()),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(
+                                                It.IsAny<IEnumerable<BusStationModel>>()),
                                        Times.Never);
         }
 
@@ -289,7 +297,8 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             var initialBusStationCount = new Random().Next(1, 20);
 
-            _busDataServiceMock.Setup(s => s.CountBusStationsAsync(It.IsAny<int>(), It.IsAny<string>()))
+            _busDataServiceMock.Setup(s => s.CountBusStationsAsync(It.IsAny<int>(),
+                                                                   It.IsAny<string>()))
                                .Returns(Task.FromResult(initialBusStationCount));
 
             Exception exception;
@@ -321,7 +330,8 @@ namespace RATBVFormsPrism.Tests.Services
                                                                                         busLineId: default,
                                                                                         isForcedRefresh: true));
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(It.IsAny<List<BusStationModel>>()),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(
+                                                It.IsAny<IEnumerable<BusStationModel>>()),
                                        Times.Never);
         }
 
@@ -331,7 +341,8 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             var expectedExceptionMessage = "No Database found";
 
-            _busDataServiceMock.Setup(s => s.CountBusStationsAsync(It.IsAny<int>(), It.IsAny<string>()))
+            _busDataServiceMock.Setup(s => s.CountBusStationsAsync(It.IsAny<int>(),
+                                                                   It.IsAny<string>()))
                                .ThrowsAsync(new Exception(expectedExceptionMessage));
 
             _fixture.Inject(_busDataServiceMock);
@@ -346,7 +357,8 @@ namespace RATBVFormsPrism.Tests.Services
                                                                                         isForcedRefresh: true),
                                               expectedExceptionMessage);
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(It.IsAny<List<BusStationModel>>()),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(
+                                                It.IsAny<IEnumerable<BusStationModel>>()),
                                        Times.Never);
         }
 
@@ -391,12 +403,14 @@ namespace RATBVFormsPrism.Tests.Services
 
             _busApiMock.Verify(a => a.GetBusTimeTables(It.IsAny<string>()), Times.Once);
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(It.Is<List<BusTimeTableModel>>(l => l.Count == expectedBusTimetableCount)),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(
+                                                It.Is<List<BusTimeTableModel>>(
+                                                    l => l.Count == expectedBusTimetableCount)),
                                        Times.Once);
         }
 
         [Test]
-        public async Task ShouldGetBusTimetablessFromLocalDatabaseWhenAvailable()
+        public async Task ShouldGetBusTimetablesFromLocalDatabaseWhenAvailable()
         {
             // Arrange
             var initialBusTimetableCount = new Random().Next(1, 20);
@@ -427,7 +441,8 @@ namespace RATBVFormsPrism.Tests.Services
 
             _busApiMock.Verify(a => a.GetBusTimeTables(It.IsAny<string>()), Times.Never);
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(It.IsAny<List<BusTimeTableModel>>()),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(
+                                                It.IsAny<IEnumerable<BusTimeTableModel>>()),
                                        Times.Never);
         }
 
@@ -470,7 +485,8 @@ namespace RATBVFormsPrism.Tests.Services
                                                                                          busStationId: default,
                                                                                          isForcedRefresh: true));
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(It.IsAny<List<BusTimeTableModel>>()),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(
+                                                It.IsAny<IEnumerable<BusTimeTableModel>>()),
                                        Times.Never);
         }
 
@@ -494,7 +510,93 @@ namespace RATBVFormsPrism.Tests.Services
                                                                                          isForcedRefresh: true),
                                               expectedExceptionMessage);
 
-            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(It.IsAny<List<BusTimeTableModel>>()),
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(
+                                                It.IsAny<IEnumerable<BusTimeTableModel>>()),
+                                       Times.Never);
+        }
+
+        [Test]
+        public async Task ShouldDownloadBusTimetablesForAllStations()
+        {
+            // Arrange
+            var expectedBusStationsCount = new Random().Next(1, 20);
+            var expectedBusTimetableCount = new Random().Next(1, 20);
+
+            var mockedBusStations = CreateMockBusStations(expectedBusStationsCount);
+
+            _busApiMock.Setup(a => a.GetBusStations(It.IsAny<string>()))
+                       .ReturnsAsync(mockedBusStations);
+
+            var mockedBusTimetables = CreateMockBusTimetables(expectedBusTimetableCount);
+
+            _busApiMock.Setup(a => a.GetBusTimeTables(It.IsAny<string>()))
+                       .ReturnsAsync(mockedBusTimetables);
+
+            _fixture.Inject(_busDataServiceMock);
+            _fixture.Inject(_busApiMock);
+
+            var SUT = _fixture.Create<BusRepository>();
+
+            // Act
+            await SUT.DownloadAllStationsTimetablesAsync(normalDirectionLink: default,
+                                                         reverseDirectionLink: default,
+                                                         busLineId: default);
+
+            // Assert
+            _busApiMock.Verify(a => a.GetBusStations(It.IsAny<string>()),
+                               Times.Exactly(2));
+            _busApiMock.Verify(a => a.GetBusTimeTables(It.IsAny<string>()),
+                               Times.Exactly(expectedBusStationsCount * 2));
+
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(
+                                                It.IsAny<IEnumerable<BusStationModel>>()),
+                                       Times.Once);
+
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(
+                                                It.IsAny<IEnumerable<BusTimeTableModel>>()),
+                                       Times.Exactly(expectedBusStationsCount * 2));
+        }
+
+        [Test]
+        [TestCase(typeof(ApiException), Description = "Throws a Api Exception")]
+        [TestCase(typeof(Exception), Description = "Throws random Exception")]
+        public async Task ShouldGetExceptionFromBusTimetablesDownloadWebRetrival(Type exceptionType)
+        {
+            // Arrange
+            Exception exception;
+
+            if (exceptionType == typeof(ApiException))
+            {
+
+                exception = await ApiException.Create(new HttpRequestMessage(),
+                                                      HttpMethod.Get,
+                                                      new HttpResponseMessage(HttpStatusCode.NotFound));
+            }
+            else
+            {
+                exception = new Exception();
+            }
+
+            _busApiMock.Setup(a => a.GetBusStations(It.IsAny<string>()))
+                       .ThrowsAsync(exception);
+
+            _fixture.Inject(_busDataServiceMock);
+            _fixture.Inject(_busApiMock);
+
+            var SUT = _fixture.Create<BusRepository>();
+
+            // Act / Assert
+            var exeption = Assert.ThrowsAsync(Is.TypeOf(exceptionType),
+                                              async () => await SUT.DownloadAllStationsTimetablesAsync(normalDirectionLink: default,
+                                                                                                       reverseDirectionLink: default,
+                                                                                                       busLineId: default));
+
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusStationsAsync(
+                                                It.IsAny<IEnumerable<BusStationModel>>()),
+                                       Times.Never);
+
+            _busDataServiceMock.Verify(s => s.InsertOrReplaceBusTimeTablesAsync(
+                                                It.IsAny<IEnumerable<BusTimeTableModel>>()),
                                        Times.Never);
         }
 

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="14" package="ro.warborg.ratbv_prism" android:versionName="1.4">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="ro.warborg.ratbv_prism" android:versionName="2.0.0.0" android:versionCode="20">
 	<uses-sdk android:minSdkVersion="21" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />

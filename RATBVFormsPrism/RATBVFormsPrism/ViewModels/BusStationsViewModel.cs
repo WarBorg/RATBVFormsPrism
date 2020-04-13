@@ -173,9 +173,9 @@ namespace RATBVFormsPrism.ViewModels
 
             using (_userDilaogsService.Loading("Downlaoding Time Tables... "))
             {
-                await _busRepository.DownloadAllStationsSchedualsAsync(_busLine.LinkNormalWay,
-                                                                       _busLine.LinkReverseWay,
-                                                                       _busLine.Id);
+                await _busRepository.DownloadAllStationsTimetablesAsync(_busLine.LinkNormalWay,
+                                                                        _busLine.LinkReverseWay,
+                                                                        _busLine.Id);
             }
 
             _userDilaogsService.Toast("Download complete for all bus stations time tables");

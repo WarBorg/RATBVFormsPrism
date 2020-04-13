@@ -226,7 +226,8 @@ namespace RATBVFormsPrism.Services
                 foreach (var timeTable in busTimeTables)
                 {
                     var existingTimeTable = storedBusTimeTables.FirstOrDefault(b => b.BusStationId == timeTable.BusStationId
-                                                                                 && b.Hour == timeTable.Hour);
+                                                                                 && b.Hour == timeTable.Hour
+                                                                                 && b.TimeOfWeek == timeTable.TimeOfWeek);
 
                     if (existingTimeTable != null)
                     {
