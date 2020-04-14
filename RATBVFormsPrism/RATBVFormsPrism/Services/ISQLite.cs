@@ -1,10 +1,8 @@
-﻿using SQLite;
-
-namespace RATBVFormsPrism.Services
+﻿namespace RATBVFormsPrism.Services
 {
     public interface ISQLiteService
     {
-        SQLiteConnection GetConnection(string databaseName);
-        SQLiteAsyncConnection GetAsyncConnection(string databaseName);
+        ISQLiteConnection GetConnection(string databaseName);
+        ISQLiteAsyncConnection GetAsyncConnection(string databaseName);
     }
 }

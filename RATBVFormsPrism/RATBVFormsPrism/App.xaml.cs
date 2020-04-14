@@ -17,6 +17,7 @@ namespace RATBVFormsPrism
         #region Fields
 
         private bool _isWebApiServerLocal = false;
+        private bool _isSQLiteDatabaseInMemory = false;
 
         #endregion
 
@@ -40,14 +41,8 @@ namespace RATBVFormsPrism
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterForNavigation<RATBVNavigation>();
-            containerRegistry.RegisterForNavigation<BusLines>();
-            containerRegistry.RegisterForNavigation<BusStations>();
-            containerRegistry.RegisterForNavigation<BusTimeTable>();
-        }
+            #region Web API Services
 
-        protected override void RegisterRequiredTypes(IContainerRegistry containerRegistry)
-        {
             if (_isWebApiServerLocal)
             {
                 containerRegistry.Register<IHttpServiceOptions, LocalHttpServiceOptions>();
@@ -60,14 +55,8 @@ namespace RATBVFormsPrism
                 containerRegistry.Register<ICustomHttpMessageHandler, DefaultHttpMessageHandler>();
             }
 
-            containerRegistry.RegisterSingleton<IBusDataService, BusDataService>();
-
             containerRegistry.Register<IHttpService, HttpService>();
-            containerRegistry.Register<IConnectivity, ConnectivityImplementation>();
-            containerRegistry.Register<IConnectivityService, ConnectivityService>();
-            containerRegistry.Register<IBusRepository, BusRepository>();
 
-            containerRegistry.RegisterInstance<IUserDialogs>(UserDialogs.Instance);
             containerRegistry.RegisterInstance<IBusApi>(
                 RestService.For<IBusApi>(
                     ((PrismApplication)Current).Container
@@ -75,7 +64,53 @@ namespace RATBVFormsPrism
                                                .HttpClient
                 ));
 
-            base.RegisterRequiredTypes(containerRegistry);
+            #endregion
+
+            #region SQLite Services
+
+            if (_isSQLiteDatabaseInMemory)
+            {
+                containerRegistry.RegisterSingleton<ISQLiteConnectionFactory, InMemorySQLiteConnectionFactory>();
+            }
+            else
+            {
+                containerRegistry.RegisterSingleton<ISQLiteConnectionFactory, DefaultSQLiteConnectionFactory>();
+            }
+
+            containerRegistry.RegisterInstance<ISQLiteAsyncConnection>(
+                ((PrismApplication)Current).Container
+                                           .Resolve<ISQLiteConnectionFactory>()
+                                           .GetAsyncSqlConnection(
+                    ((PrismApplication)Current).Container
+                                               .Resolve<ISQLiteService>()));
+
+            #endregion
+
+            #region Other External Services
+
+            containerRegistry.Register<IConnectivity, ConnectivityImplementation>();
+
+            containerRegistry.RegisterInstance<IUserDialogs>(UserDialogs.Instance);
+
+            #endregion
+
+            #region Internal Services
+
+            containerRegistry.RegisterSingleton<IBusDataService, BusDataService>();
+
+            containerRegistry.Register<IConnectivityService, ConnectivityService>();
+            containerRegistry.Register<IBusRepository, BusRepository>();
+
+            #endregion
+
+            #region ViewModels
+
+            containerRegistry.RegisterForNavigation<RATBVNavigation>();
+            containerRegistry.RegisterForNavigation<BusLines>();
+            containerRegistry.RegisterForNavigation<BusStations>();
+            containerRegistry.RegisterForNavigation<BusTimeTable>();
+
+            #endregion
         }
 
         protected override void OnStart()

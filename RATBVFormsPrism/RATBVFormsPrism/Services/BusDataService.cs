@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using RATBVData.Models.Models;
-using SQLite;
 
 namespace RATBVFormsPrism.Services
 {
@@ -13,17 +12,15 @@ namespace RATBVFormsPrism.Services
     {
         #region Fields
 
-        private readonly SQLiteAsyncConnection _asyncConnection;
+        private readonly ISQLiteAsyncConnection _asyncConnection;
 
         #endregion
 
         #region Constructors
 
-        public BusDataService(ISQLiteService sqlite)
+        public BusDataService(ISQLiteAsyncConnection asyncConnection)
         {
-            string sqliteFilename = "ratbvPrism.sql";
-
-            _asyncConnection = sqlite.GetAsyncConnection(sqliteFilename);
+            _asyncConnection = asyncConnection;
         }
 
         #endregion

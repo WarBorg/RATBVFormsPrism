@@ -43,5 +43,23 @@
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\HttpService.cs">
       <DependentUpon>IHttpService.cs</DependentUpon>
     </Compile>
+    <Compile Update="Services\CustomSQLiteAsyncConnection.cs">
+      <DependentUpon>ISQLiteAsyncConnection.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Services\SQLiteConnectionFactory.cs">
+      <DependentUpon>ISQLiteConnectionFactory.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Services\CustomSQLiteConnection.cs">
+      <DependentUpon>ISQLiteConnection.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Services\InMemorySQLiteConnectionFactory.cs">
+      <DependentUpon>ISQLiteConnectionFactory.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Services\DefaultSQLiteConnectionFactory.cs">
+      <DependentUpon>ISQLiteConnectionFactory.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>

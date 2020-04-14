@@ -1,13 +1,36 @@
 using System;
 using System.IO;
 using RATBVFormsPrism.Services;
-using SQLite;
 
 namespace RATBVFormsPrism.Droid.Services
 {
     public class SQLite_Android : ISQLiteService
 	{
-        #region ISQLite Methods
+        #region ISQLiteService Methods
+
+        public ISQLiteConnection GetConnection(string databaseName)
+        {
+            var path = GetPath(databaseName);
+
+            var conn = new CustomSQLiteConnection(path);
+
+            // Return the database connection 
+            return conn;
+        }
+
+        public ISQLiteAsyncConnection GetAsyncConnection(string databaseName)
+        {
+            var path = GetPath(databaseName);
+
+            var conn = new CustomSQLiteAsyncConnection(path);
+
+            // Return the database connection 
+            return conn;
+        }
+
+        #endregion
+
+        #region Methods
 
         private string GetPath(string databaseName)
         {
@@ -15,29 +38,9 @@ namespace RATBVFormsPrism.Droid.Services
 
             // Documents folder
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder
-                                                                        .Personal); 
+                                                                        .Personal);
 
             return Path.Combine(documentsPath, sqliteFilename);
-        }
-
-        public SQLiteConnection GetConnection(string databaseName)
-        {
-            var path = GetPath(databaseName);
-
-            var conn = new SQLiteConnection(path);
-
-            // Return the database connection 
-            return conn;
-        }
-
-        public SQLiteAsyncConnection GetAsyncConnection(string databaseName)
-        {
-            var path = GetPath(databaseName);
-
-            var conn = new SQLiteAsyncConnection(path);
-
-            // Return the database connection 
-            return conn;
         }
 
         #endregion
