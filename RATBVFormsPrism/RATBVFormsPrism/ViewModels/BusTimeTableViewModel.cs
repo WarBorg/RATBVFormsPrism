@@ -26,7 +26,6 @@ namespace RATBVFormsPrism.ViewModels
         #region Fields
 
         private BusStationModel _busStation;
-        private bool _isGettingData = false;
 
         #endregion
 
@@ -100,7 +99,7 @@ namespace RATBVFormsPrism.ViewModels
         {
             get
             {
-                _refreshCommand ??= new DelegateCommand(DoRefreshCommand);
+                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => !IsBusy);
                 return _refreshCommand;
             }
         }
@@ -126,7 +125,10 @@ namespace RATBVFormsPrism.ViewModels
         {
             if (_connectivityService.IsInternetAvailable)
             {
-                await GetBusTimeTableAsync(isForcedRefresh: true);
+                using (_userDilaogsService.Loading("Fetching Data... "))
+                {
+                    await GetBusTimeTableAsync(isForcedRefresh: true);
+                }
             }
             else
             {
@@ -165,15 +167,6 @@ namespace RATBVFormsPrism.ViewModels
                 return;
             }
 
-            // Used because IsBusy is in sync with the Refresh Command and it will refresh all three tabs
-            // making the call to the server three times
-            if (_isGettingData)
-            {
-                return;
-            }
-
-            _isGettingData = true;
-
             var busTimetables = await _busRepository.GetBusTimeTableAsync(_busStation.SchedualLink,
                                                                           _busStation.Id.Value,
                                                                           isForcedRefresh);
@@ -182,8 +175,6 @@ namespace RATBVFormsPrism.ViewModels
                                        .LastUpdateDate;
 
             GetTimeTableByTimeOfWeek(busTimetables);
-
-            _isGettingData = false;
         }
 
         private void GetTimeTableByTimeOfWeek(List<BusTimeTableModel> busTimetable)

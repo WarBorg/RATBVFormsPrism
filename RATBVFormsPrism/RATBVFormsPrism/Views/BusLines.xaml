@@ -39,12 +39,9 @@
                                Text="{TemplateBinding BindingContext.LastUpdated,
                                                       StringFormat='Updated on {0}'}" />
                     </StackLayout>
-                    <RefreshView IsRefreshing="{TemplateBinding BindingContext.IsBusy}"
-                                 Command="{TemplateBinding BindingContext.RefreshCommand}">
 
-                        <ContentPresenter />
+                    <ContentPresenter />
 
-                    </RefreshView>
                 </StackLayout>
             </ControlTemplate>
 
@@ -70,27 +67,36 @@
                      IconImageSource="{x:OnPlatform Android='ic_tab_bus.png',
                                                     iOS='Bus.png'}"
                      ControlTemplate="{StaticResource BusLineTabPageTemplate}">
-            <ListView HasUnevenRows="True"
-                      ItemsSource="{Binding BusLines}"
-                      ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"/>
+            <RefreshView IsRefreshing="{Binding IsBusy}"
+                         Command="{Binding RefreshCommand}">
+                <ListView HasUnevenRows="True"
+                          ItemsSource="{Binding BusLines}"
+                          ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"/>
+            </RefreshView>
         </ContentPage>
 
         <ContentPage Title="Midibus"
                      IconImageSource="{x:OnPlatform Android='ic_tab_midibus.png',
                                                     iOS='MidiBus.png'}"
                      ControlTemplate="{StaticResource BusLineTabPageTemplate}">
-            <ListView HasUnevenRows="True"
-                      ItemsSource="{Binding MidiBusLines}"
-                      ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"/>
+            <RefreshView IsRefreshing="{Binding IsBusy}"
+                         Command="{Binding RefreshCommand}">
+                <ListView HasUnevenRows="True"
+                          ItemsSource="{Binding MidiBusLines}"
+                          ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"/>
+            </RefreshView>
         </ContentPage>
 
         <ContentPage Title="Trolleybus"
                      IconImageSource="{x:OnPlatform Android='ic_tab_trolleybus.png',
                                                     iOS='TrolleyBus.png'}"
                      ControlTemplate="{StaticResource BusLineTabPageTemplate}">
-            <ListView HasUnevenRows="True"
-                      ItemsSource="{Binding TrolleybusLines}"
-                      ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"/>
+            <RefreshView IsRefreshing="{Binding IsBusy}"
+                         Command="{Binding RefreshCommand}">
+                <ListView HasUnevenRows="True"
+                          ItemsSource="{Binding TrolleybusLines}"
+                          ItemTemplate="{StaticResource BusLinesListViewDataTemplate}"/>
+            </RefreshView>
         </ContentPage>
     </TabbedPage.Children>
 </TabbedPage>

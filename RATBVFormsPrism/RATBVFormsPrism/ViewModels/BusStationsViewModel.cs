@@ -114,7 +114,7 @@ namespace RATBVFormsPrism.ViewModels
         {
             get
             {
-                _refreshCommand ??= new DelegateCommand(DoRefreshCommand);
+                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => !IsBusy);
                 return _refreshCommand;
             }
         }
@@ -151,8 +151,11 @@ namespace RATBVFormsPrism.ViewModels
         {
             if (_connectivityService.IsInternetAvailable)
             {
-                await GetBusStationsAsync(isRefresh: true,
-                                          shouldReverseWay: false);
+                using (_userDilaogsService.Loading("Fetching Data... "))
+                {
+                    await GetBusStationsAsync(isRefresh: true,
+                                              shouldReverseWay: false);
+                }
             }
             else
             {
