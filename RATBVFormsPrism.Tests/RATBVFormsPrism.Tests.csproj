@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Services\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RATBVData\RATBVData.Models\RATBVData.Models.csproj" />

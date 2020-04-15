@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Services;
-using SQLite;
 
 namespace RATBVFormsPrism.Tests.Services
 {

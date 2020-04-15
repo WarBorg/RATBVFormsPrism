@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using Prism.Commands;
 using Prism.Navigation;
 using RATBVData.Models.Models;
@@ -48,10 +49,10 @@ namespace RATBVFormsPrism.ViewModels
                                 INavigationService navigationService)
         {
             _busLine = busLine;
-            _navigationService = navigationService;
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
-            Name = _busLine.Name;
-            Route = _busLine.Route;
+            Name = _busLine?.Name;
+            Route = _busLine?.Route;
         }
 
         #endregion

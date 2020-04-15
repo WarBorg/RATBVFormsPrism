@@ -39,7 +39,7 @@ namespace RATBVFormsPrism.Tests.Services
 
         #endregion
 
-        #region Mock Data Methods 
+        #region Mock Data Methods
 
         private List<BusLineModel> CreateMockBusLines(int busLineCount)
         {
@@ -193,9 +193,9 @@ namespace RATBVFormsPrism.Tests.Services
             var SUT = _fixture.Create<BusRepository>();
 
             // Act / Assert
-            var exeption = Assert.ThrowsAsync(Is.TypeOf<Exception>(),
-                                              async () => await SUT.GetBusLinesAsync(isForcedRefresh: true),
-                                              expectedExceptionMessage);
+            Assert.ThrowsAsync(Is.TypeOf<Exception>(),
+                               async () => await SUT.GetBusLinesAsync(isForcedRefresh: true),
+                               expectedExceptionMessage);
 
             _busDataServiceMock.Verify(s => s.InsertOrReplaceBusLinesAsync(
                                                 It.IsAny<IEnumerable<BusLineModel>>()),

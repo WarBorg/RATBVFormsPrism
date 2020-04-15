@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using Prism.Commands;
 using Prism.Navigation;
 using RATBVData.Models.Models;
@@ -25,7 +26,7 @@ namespace RATBVFormsPrism.ViewModels
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public string SchedualLink { get; set; }
+        public string ScheduleLink { get; set; }
 
         #endregion
 
@@ -49,11 +50,11 @@ namespace RATBVFormsPrism.ViewModels
                                    INavigationService navigationService)
         {
             _busStation = busStation;
-            _navigationService = navigationService;
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
-            Id = (int)_busStation.Id;
-            Name = _busStation.Name;
-            SchedualLink = _busStation.SchedualLink;
+            Id = _busStation?.Id.Value ?? 0;
+            Name = _busStation?.Name;
+            ScheduleLink = _busStation?.SchedualLink;
         }
 
         #endregion
