@@ -52,44 +52,17 @@ namespace RATBVFormsPrism.Services
 
         #region Bus Lines Methods
 
-        public Task<int> CountBusLines
+        public async Task<int> CountBusLinesAsync()
         {
-            get => _asyncConnection.Table<BusLineModel>()
-                                   .CountAsync();
+            return await _asyncConnection.Table<BusLineModel>()
+                                        ?.CountAsync();
         }
 
-        public async Task<List<BusLineModel>> GetBusLinesByNameAsync(string nameFilter = null)
+        public async Task<List<BusLineModel>> GetBusLineAsync()
         {
-            if (nameFilter == null)
-            {
-                nameFilter = string.Empty;
-            }
-
             return await (from busLineTable in _asyncConnection.Table<BusLineModel>()
-                          where busLineTable.Name
-                                            .Contains(nameFilter)
                           orderby busLineTable.Id
                           select busLineTable).ToListAsync();
-        }
-
-        public async Task<BusLineModel> GetBusLineByIdAsync(int Id)
-        {
-            return await _asyncConnection.GetAsync<BusLineModel>(Id);
-        }
-
-        public async Task<int> InsertBusLineAsync(BusLineModel busLine)
-        {
-            return await _asyncConnection.InsertAsync(busLine);
-        }
-
-        public async Task<int> UpdateBusLineAsync(BusLineModel busLine)
-        {
-            return await _asyncConnection.UpdateAsync(busLine);
-        }
-
-        public async Task<int> DeleteBusLineAsync(BusLineModel busLine)
-        {
-            return await _asyncConnection.DeleteAsync(busLine);
         }
 
         public async Task<int> InsertOrReplaceBusLinesAsync(IEnumerable<BusLineModel> busLines)
@@ -101,7 +74,8 @@ namespace RATBVFormsPrism.Services
 
         #region Bus Stations Methods
 
-        public async Task<int> CountBusStationsAsync(int busLineId, string direction)
+        public async Task<int> CountBusStationsByBusLineIdAndDirectionAsync(int busLineId,
+                                                                            string direction)
         {
             return await (from busStationTable in _asyncConnection.Table<BusStationModel>()
                           where busStationTable.BusLineId == busLineId
@@ -109,42 +83,14 @@ namespace RATBVFormsPrism.Services
                           select busStationTable).CountAsync();
         }
 
-        public async Task<List<BusStationModel>> GetBusStationsByNameAsync(int busId,
-                                                                           string direction,
-                                                                           string nameFilter = null)
+        public async Task<List<BusStationModel>> GetBusStationsByBusLineIdAndDirectionAsync(int busId,
+                                                                                            string direction)
         {
-            if (nameFilter == null)
-            {
-                nameFilter = string.Empty;
-            }
-
             return await (from busStationTable in _asyncConnection.Table<BusStationModel>()
                           where busStationTable.BusLineId == busId
                              && busStationTable.Direction == direction
-                             && busStationTable.Name
-                                               .Contains(nameFilter)
                           orderby busStationTable.Id
                           select busStationTable).ToListAsync();
-        }
-
-        public async Task<BusStationModel> GetBusStationByIdAsync(int Id)
-        {
-            return await _asyncConnection.GetAsync<BusStationModel>(Id);
-        }
-
-        public async Task<int> InsertBusStationAsync(BusStationModel busStation)
-        {
-            return await _asyncConnection.InsertAsync(busStation);
-        }
-
-        public async Task<int> UpdateBusStationAsync(BusStationModel busStation)
-        {
-            return await _asyncConnection.UpdateAsync(busStation);
-        }
-
-        public async Task<int> DeleteBusStationAsync(BusStationModel busStation)
-        {
-            return await _asyncConnection.DeleteAsync(busStation);
         }
 
         public async Task<int> InsertOrReplaceBusStationsAsync(IEnumerable<BusStationModel> busStations)
@@ -152,7 +98,8 @@ namespace RATBVFormsPrism.Services
             var busLineId = busStations.FirstOrDefault()?.BusLineId ?? 0;
             var busDirection = busStations.FirstOrDefault()?.Direction ?? string.Empty;
 
-            var storedBusStations = await GetBusStationsByNameAsync(busLineId, busDirection);
+            var storedBusStations = await GetBusStationsByBusLineIdAndDirectionAsync(busLineId,
+                                                                                     busDirection);
 
             if (storedBusStations.Count > 0)
             {
@@ -174,7 +121,7 @@ namespace RATBVFormsPrism.Services
 
         #region Bus Time Table Methods
 
-        public async Task<int> CountBusTimeTableAsync(int busStationId)
+        public async Task<int> CountBusTimeTableByBusStationIdAsync(int busStationId)
         {
             return await (from busStationTable in _asyncConnection.Table<BusTimeTableModel>()
                           where busStationTable.BusStationId == busStationId
@@ -187,26 +134,6 @@ namespace RATBVFormsPrism.Services
                           where busTimeTable.BusStationId == busStationId
                           orderby busTimeTable.Id
                           select busTimeTable).ToListAsync();
-        }
-
-        public async Task<BusTimeTableModel> GetBusTimeTableById(int Id)
-        {
-            return await _asyncConnection.GetAsync<BusTimeTableModel>(Id);
-        }
-
-        public async Task<int> InsertBusTimeTableAsync(BusTimeTableModel busTimeTable)
-        {
-            return await _asyncConnection.InsertAsync(busTimeTable);
-        }
-
-        public async Task<int> UpdateBusTimeTableAsync(BusTimeTableModel busTimeTable)
-        {
-            return await _asyncConnection.UpdateAsync(busTimeTable);
-        }
-
-        public async Task<int> DeleteBusTimeTableAsync(BusTimeTableModel busTimeTable)
-        {
-            return await _asyncConnection.DeleteAsync(busTimeTable);
         }
 
         public async Task<int> InsertOrReplaceBusTimeTablesAsync(IEnumerable<BusTimeTableModel> busTimeTables)
@@ -262,12 +189,121 @@ namespace RATBVFormsPrism.Services
             return Task.Factory.StartNew(() =>
             {
                 var conn = _asyncConnection.GetConnection();
-                using (conn.Lock())
+
+                using (conn?.Lock())
                 {
-                    return conn.DeleteAll<T>();
+                    return conn?.DeleteAll<T>() ?? 0;
                 }
             }, cancellationToken, TaskCreationOptions.None, null ?? TaskScheduler.Default);
         }
+
+        #endregion
+
+        #region NOT USED METHODS
+
+        #region Bus Lines Methods
+
+        private async Task<List<BusLineModel>> GetBusLinesByNameAsync(string nameFilter = null)
+        {
+            if (nameFilter == null)
+            {
+                nameFilter = string.Empty;
+            }
+
+            return await (from busLineTable in _asyncConnection.Table<BusLineModel>()
+                          where busLineTable.Name
+                                            .Contains(nameFilter)
+                          orderby busLineTable.Id
+                          select busLineTable).ToListAsync();
+        }
+
+        private async Task<BusLineModel> GetBusLineByIdAsync(int Id)
+        {
+            return await _asyncConnection.GetAsync<BusLineModel>(Id);
+        }
+
+        private async Task<int> InsertBusLineAsync(BusLineModel busLine)
+        {
+            return await _asyncConnection.InsertAsync(busLine);
+        }
+
+        private async Task<int> UpdateBusLineAsync(BusLineModel busLine)
+        {
+            return await _asyncConnection.UpdateAsync(busLine);
+        }
+
+        private async Task<int> DeleteBusLineAsync(BusLineModel busLine)
+        {
+            return await _asyncConnection.DeleteAsync(busLine);
+        }
+
+        #endregion
+
+        #region Bus Stations Methods
+
+        private async Task<List<BusStationModel>> GetBusStationsByNameAsync(int busId,
+                                                                           string direction,
+                                                                           string nameFilter = null)
+        {
+            if (nameFilter == null)
+            {
+                nameFilter = string.Empty;
+            }
+
+            return await (from busStationTable in _asyncConnection.Table<BusStationModel>()
+                          where busStationTable.BusLineId == busId
+                             && busStationTable.Direction == direction
+                             && busStationTable.Name
+                                               .Contains(nameFilter)
+                          orderby busStationTable.Id
+                          select busStationTable).ToListAsync();
+        }
+
+        private async Task<BusStationModel> GetBusStationByIdAsync(int Id)
+        {
+            return await _asyncConnection.GetAsync<BusStationModel>(Id);
+        }
+
+        private async Task<int> InsertBusStationAsync(BusStationModel busStation)
+        {
+            return await _asyncConnection.InsertAsync(busStation);
+        }
+
+        private async Task<int> UpdateBusStationAsync(BusStationModel busStation)
+        {
+            return await _asyncConnection.UpdateAsync(busStation);
+        }
+
+        private async Task<int> DeleteBusStationAsync(BusStationModel busStation)
+        {
+            return await _asyncConnection.DeleteAsync(busStation);
+        }
+
+        #endregion
+
+        #region Bus Time Table Methods
+
+        private async Task<BusTimeTableModel> GetBusTimeTableById(int Id)
+        {
+            return await _asyncConnection.GetAsync<BusTimeTableModel>(Id);
+        }
+
+        private async Task<int> InsertBusTimeTableAsync(BusTimeTableModel busTimeTable)
+        {
+            return await _asyncConnection.InsertAsync(busTimeTable);
+        }
+
+        private async Task<int> UpdateBusTimeTableAsync(BusTimeTableModel busTimeTable)
+        {
+            return await _asyncConnection.UpdateAsync(busTimeTable);
+        }
+
+        private async Task<int> DeleteBusTimeTableAsync(BusTimeTableModel busTimeTable)
+        {
+            return await _asyncConnection.DeleteAsync(busTimeTable);
+        }
+
+        #endregion
 
         #endregion
     }

@@ -34,9 +34,9 @@ namespace RATBVFormsPrism.Services
         {
             try
             {
-                var busLinesNumber = await _busDataService.CountBusLines;
+                var busLinesCount = await _busDataService.CountBusLinesAsync();
 
-                if (isForcedRefresh || busLinesNumber == 0)
+                if (isForcedRefresh || busLinesCount == 0)
                 {
                     var busLines = await _busApi.GetBusLines();
 
@@ -45,7 +45,7 @@ namespace RATBVFormsPrism.Services
                     await InsertBusLinesInDatabaseAsync(busLines, lastUpdated);
                 }
 
-                return await _busDataService.GetBusLinesByNameAsync();
+                return await _busDataService.GetBusLineAsync();
             }
             catch (ValidationApiException validationException)
             {
@@ -68,7 +68,7 @@ namespace RATBVFormsPrism.Services
         {
             try
             {
-                var busStationsCount = await _busDataService.CountBusStationsAsync(busLineId,
+                var busStationsCount = await _busDataService.CountBusStationsByBusLineIdAndDirectionAsync(busLineId,
                                                                                    direction);
 
                 if (isForcedRefresh || busStationsCount == 0)
@@ -84,7 +84,7 @@ namespace RATBVFormsPrism.Services
                                                            lastUpdated);
                 }
                 
-                return await _busDataService.GetBusStationsByNameAsync(busLineId,
+                return await _busDataService.GetBusStationsByBusLineIdAndDirectionAsync(busLineId,
                                                                        direction);
             }
             catch (ValidationApiException validationException)
@@ -107,7 +107,7 @@ namespace RATBVFormsPrism.Services
         {
             try
             {
-                var busTimeTableCount = await _busDataService.CountBusTimeTableAsync(busStationId);
+                var busTimeTableCount = await _busDataService.CountBusTimeTableByBusStationIdAsync(busStationId);
 
                 if (isForcedRefresh || busTimeTableCount == 0)
                 {

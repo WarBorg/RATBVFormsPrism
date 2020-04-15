@@ -70,7 +70,7 @@ namespace RATBVFormsPrism.Tests.Services
                                                    bool isForcedRefresh)
         {
             // Arrange
-            _busDataServiceMock.SetupGet(s => s.CountBusLines)
+            _busDataServiceMock.Setup(s => s.CountBusLinesAsync())
                                .Returns(Task.FromResult(initialBusLineCount));
 
             var expectedBusLineCount = 20;
@@ -80,7 +80,7 @@ namespace RATBVFormsPrism.Tests.Services
             _busApiMock.Setup(a => a.GetBusLines())
                        .ReturnsAsync(mockedBusLines);
 
-            _busDataServiceMock.Setup(s => s.GetBusLinesByNameAsync(default))
+            _busDataServiceMock.Setup(s => s.GetBusLineAsync())
                                .ReturnsAsync(mockedBusLines);
 
             _fixture.Inject(_busDataServiceMock);
@@ -108,14 +108,14 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             var initialBusLineCount = new Random().Next(1, 20);
 
-            _busDataServiceMock.SetupGet(s => s.CountBusLines)
+            _busDataServiceMock.Setup(s => s.CountBusLinesAsync())
                                .Returns(Task.FromResult(initialBusLineCount));
 
             var expectedBusLineCount = new Random().Next(1, 20);
 
             var mockedBusLine = CreateMockBusLines(expectedBusLineCount);
 
-            _busDataServiceMock.Setup(s => s.GetBusLinesByNameAsync(default))
+            _busDataServiceMock.Setup(s => s.GetBusLineAsync())
                                .ReturnsAsync(mockedBusLine);
 
             _fixture.Inject(_busDataServiceMock);
@@ -145,7 +145,7 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             var initialBusLineCount = new Random().Next(1, 20);
 
-            _busDataServiceMock.SetupGet(s => s.CountBusLines)
+            _busDataServiceMock.Setup(s => s.CountBusLinesAsync())
                                .Returns(Task.FromResult(initialBusLineCount));
 
             Exception exception;
@@ -185,7 +185,7 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             var expectedExceptionMessage = "No Database found";
 
-            _busDataServiceMock.SetupGet(s => s.CountBusLines)
+            _busDataServiceMock.Setup(s => s.CountBusLinesAsync())
                                .Throws(new Exception(expectedExceptionMessage));
 
             _fixture.Inject(_busDataServiceMock);
@@ -215,7 +215,8 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             int mockBusLineId = new Random().Next(0, 30);
 
-            _busDataServiceMock.Setup(s => s.CountBusStationsAsync(mockBusLineId, It.IsAny<string>()))
+            _busDataServiceMock.Setup(s => s.CountBusStationsByBusLineIdAndDirectionAsync(mockBusLineId,
+                                                                                          It.IsAny<string>()))
                                .Returns(Task.FromResult(initialBusStationCount));
 
             var expectedBusStationsCount = new Random().Next(1, 20);
@@ -225,7 +226,8 @@ namespace RATBVFormsPrism.Tests.Services
             _busApiMock.Setup(a => a.GetBusStations(It.IsAny<string>()))
                        .ReturnsAsync(mockedBusStations);
 
-            _busDataServiceMock.Setup(s => s.GetBusStationsByNameAsync(mockBusLineId, default, null))
+            _busDataServiceMock.Setup(s => s.GetBusStationsByBusLineIdAndDirectionAsync(mockBusLineId,
+                                                                                        default))
                                .ReturnsAsync(mockedBusStations);
 
             _fixture.Inject(_busDataServiceMock);
@@ -257,14 +259,16 @@ namespace RATBVFormsPrism.Tests.Services
             var initialBusStationCount = new Random().Next(1, 20);
             int mockBusLineId = new Random().Next(0, 30);
 
-            _busDataServiceMock.Setup(s => s.CountBusStationsAsync(mockBusLineId, It.IsAny<string>()))
+            _busDataServiceMock.Setup(s => s.CountBusStationsByBusLineIdAndDirectionAsync(mockBusLineId,
+                                                                                          It.IsAny<string>()))
                                .Returns(Task.FromResult(initialBusStationCount));
 
             var expectedBusStationCount = new Random().Next(1, 20);
 
             var mockedBusStations = CreateMockBusStations(expectedBusStationCount);
 
-            _busDataServiceMock.Setup(s => s.GetBusStationsByNameAsync(mockBusLineId, default, null))
+            _busDataServiceMock.Setup(s => s.GetBusStationsByBusLineIdAndDirectionAsync(mockBusLineId,
+                                                                                        default))
                                .ReturnsAsync(mockedBusStations);
 
             _fixture.Inject(_busDataServiceMock);
@@ -296,8 +300,8 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             var initialBusStationCount = new Random().Next(1, 20);
 
-            _busDataServiceMock.Setup(s => s.CountBusStationsAsync(It.IsAny<int>(),
-                                                                   It.IsAny<string>()))
+            _busDataServiceMock.Setup(s => s.CountBusStationsByBusLineIdAndDirectionAsync(It.IsAny<int>(),
+                                                                                          It.IsAny<string>()))
                                .Returns(Task.FromResult(initialBusStationCount));
 
             Exception exception;
@@ -340,7 +344,7 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             var expectedExceptionMessage = "No Database found";
 
-            _busDataServiceMock.Setup(s => s.CountBusStationsAsync(It.IsAny<int>(),
+            _busDataServiceMock.Setup(s => s.CountBusStationsByBusLineIdAndDirectionAsync(It.IsAny<int>(),
                                                                    It.IsAny<string>()))
                                .ThrowsAsync(new Exception(expectedExceptionMessage));
 
@@ -374,7 +378,7 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             int mockBusStationId = new Random().Next(0, 30);
 
-            _busDataServiceMock.Setup(s => s.CountBusTimeTableAsync(mockBusStationId))
+            _busDataServiceMock.Setup(s => s.CountBusTimeTableByBusStationIdAsync(mockBusStationId))
                                .Returns(Task.FromResult(initialBusTimetableCount));
 
             var expectedBusTimetableCount = new Random().Next(1, 20);
@@ -415,7 +419,7 @@ namespace RATBVFormsPrism.Tests.Services
             var initialBusTimetableCount = new Random().Next(1, 20);
             int mockBusStationId = new Random().Next(0, 30);
 
-            _busDataServiceMock.Setup(s => s.CountBusTimeTableAsync(mockBusStationId))
+            _busDataServiceMock.Setup(s => s.CountBusTimeTableByBusStationIdAsync(mockBusStationId))
                                .Returns(Task.FromResult(initialBusTimetableCount));
 
             var expectedBusTimetableCount = new Random().Next(1, 20);
@@ -453,7 +457,7 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             var initialBusTimetableCount = new Random().Next(1, 20);
 
-            _busDataServiceMock.Setup(s => s.CountBusTimeTableAsync(It.IsAny<int>()))
+            _busDataServiceMock.Setup(s => s.CountBusTimeTableByBusStationIdAsync(It.IsAny<int>()))
                                .Returns(Task.FromResult(initialBusTimetableCount));
 
             Exception exception;
@@ -495,7 +499,7 @@ namespace RATBVFormsPrism.Tests.Services
             // Arrange
             var expectedExceptionMessage = "No Database found";
 
-            _busDataServiceMock.Setup(s => s.CountBusTimeTableAsync(It.IsAny<int>()))
+            _busDataServiceMock.Setup(s => s.CountBusTimeTableByBusStationIdAsync(It.IsAny<int>()))
                                .ThrowsAsync(new Exception(expectedExceptionMessage));
 
             _fixture.Inject(_busDataServiceMock);
