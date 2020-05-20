@@ -54,7 +54,7 @@ namespace RATBVFormsPrism.ViewModels
 
             Id = _busStation?.Id.Value ?? 0;
             Name = _busStation?.Name;
-            ScheduleLink = _busStation?.SchedualLink;
+            ScheduleLink = _busStation?.ScheduleLink;
         }
 
         #endregion

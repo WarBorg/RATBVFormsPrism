@@ -11,7 +11,7 @@ namespace RATBVFormsPrism.Services
         Task DeleteAllTablesAsync();
 
         Task<int> CountBusLinesAsync();
-        Task<List<BusLineModel>> GetBusLineAsync();
+        Task<List<BusLineModel>> GetBusLinesAsync();
         Task<int> InsertOrReplaceBusLinesAsync(IEnumerable<BusLineModel> busLines);
 
         Task<int> CountBusStationsByBusLineIdAndDirectionAsync(int busLineId, string direction);

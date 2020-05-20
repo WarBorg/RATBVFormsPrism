@@ -58,7 +58,7 @@ namespace RATBVFormsPrism.Services
                                         ?.CountAsync();
         }
 
-        public async Task<List<BusLineModel>> GetBusLineAsync()
+        public async Task<List<BusLineModel>> GetBusLinesAsync()
         {
             return await (from busLineTable in _asyncConnection.Table<BusLineModel>()
                           orderby busLineTable.Id

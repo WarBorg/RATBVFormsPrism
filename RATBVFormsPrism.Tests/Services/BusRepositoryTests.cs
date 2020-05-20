@@ -80,7 +80,7 @@ namespace RATBVFormsPrism.Tests.Services
             _busApiMock.Setup(a => a.GetBusLines())
                        .ReturnsAsync(mockedBusLines);
 
-            _busDataServiceMock.Setup(s => s.GetBusLineAsync())
+            _busDataServiceMock.Setup(s => s.GetBusLinesAsync())
                                .ReturnsAsync(mockedBusLines);
 
             _fixture.Inject(_busDataServiceMock);
@@ -115,7 +115,7 @@ namespace RATBVFormsPrism.Tests.Services
 
             var mockedBusLine = CreateMockBusLines(expectedBusLineCount);
 
-            _busDataServiceMock.Setup(s => s.GetBusLineAsync())
+            _busDataServiceMock.Setup(s => s.GetBusLinesAsync())
                                .ReturnsAsync(mockedBusLine);
 
             _fixture.Inject(_busDataServiceMock);
@@ -397,7 +397,7 @@ namespace RATBVFormsPrism.Tests.Services
             var SUT = _fixture.Create<BusRepository>();
 
             // Act
-            var busTimetables = await SUT.GetBusTimeTableAsync(schedualLink: default,
+            var busTimetables = await SUT.GetBusTimetablesAsync(scheduleLink: default,
                                                                mockBusStationId,
                                                                isForcedRefresh);
 
@@ -435,7 +435,7 @@ namespace RATBVFormsPrism.Tests.Services
             var SUT = _fixture.Create<BusRepository>();
 
             // Act
-            var busTimetables = await SUT.GetBusTimeTableAsync(schedualLink: default,
+            var busTimetables = await SUT.GetBusTimetablesAsync(scheduleLink: default,
                                                                mockBusStationId,
                                                                isForcedRefresh: false);
 
@@ -484,7 +484,7 @@ namespace RATBVFormsPrism.Tests.Services
 
             // Act / Assert
             var exeption = Assert.ThrowsAsync(Is.TypeOf(exceptionType),
-                                              async () => await SUT.GetBusTimeTableAsync(schedualLink: default,
+                                              async () => await SUT.GetBusTimetablesAsync(scheduleLink: default,
                                                                                          busStationId: default,
                                                                                          isForcedRefresh: true));
 
@@ -508,7 +508,7 @@ namespace RATBVFormsPrism.Tests.Services
 
             // Act / Assert
             var exeption = Assert.ThrowsAsync(Is.TypeOf<Exception>(),
-                                              async () => await SUT.GetBusTimeTableAsync(schedualLink: default,
+                                              async () => await SUT.GetBusTimetablesAsync(scheduleLink: default,
                                                                                          busStationId: default,
                                                                                          isForcedRefresh: true),
                                               expectedExceptionMessage);

@@ -13,7 +13,7 @@ namespace RATBVFormsPrism.Services
                                                         int busLineId,
                                                         bool isForcedRefresh);
 
-        Task<List<BusTimeTableModel>> GetBusTimeTableAsync(string schedualLink,
+        Task<List<BusTimeTableModel>> GetBusTimetablesAsync(string schedualLink,
                                                            int busStationId,
                                                            bool isForcedRefresh);
 

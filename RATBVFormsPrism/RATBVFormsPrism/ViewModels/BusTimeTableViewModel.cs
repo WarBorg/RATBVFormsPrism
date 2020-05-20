@@ -167,7 +167,7 @@ namespace RATBVFormsPrism.ViewModels
                 return;
             }
 
-            var busTimetables = await _busRepository.GetBusTimeTableAsync(_busStation.SchedualLink,
+            var busTimetables = await _busRepository.GetBusTimetablesAsync(_busStation.ScheduleLink,
                                                                           _busStation.Id.Value,
                                                                           isForcedRefresh);
 

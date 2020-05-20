@@ -42,10 +42,10 @@ namespace RATBVFormsPrism.Tests.ViewModels
             return _fixture.Build<BusStationModel>()
                            .Without(l => l.Id)
                            .Without(l => l.Name)
-                           .Without(l => l.SchedualLink)
+                           .Without(l => l.ScheduleLink)
                            .Do(l => l.Id = id)
                            .Do(l => l.Name = name)
-                           .Do(l => l.SchedualLink = scheduleLink)
+                           .Do(l => l.ScheduleLink = scheduleLink)
                            .Create();
         }
 
