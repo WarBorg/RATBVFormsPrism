@@ -2,9 +2,9 @@
 
 namespace RATBVFormsPrism.Views
 {
-    public partial class BusTimeTable : TabbedPage
+    public partial class BusTimetables : TabbedPage
     {
-        public BusTimeTable()
+        public BusTimetables()
         {
             InitializeComponent();
         }

@@ -5,8 +5,8 @@ using Moq;
 using NUnit.Framework;
 using Prism.Navigation;
 using RATBVData.Models.Models;
-using RATBVFormsPrism.ViewModels;
 using RATBVFormsPrism.Views;
+using static RATBVFormsPrism.ViewModels.BusLinesViewModel;
 
 namespace RATBVFormsPrism.Tests.ViewModels
 {
@@ -64,7 +64,7 @@ namespace RATBVFormsPrism.Tests.ViewModels
             _fixture.Inject(mockedBusLine);
 
             // Act
-            var SUT = _fixture.Build<BusLineViewModel>()
+            var SUT = _fixture.Build<BusLinesItemViewModel>()
                               .OmitAutoProperties()
                               .Create();
 
@@ -78,7 +78,7 @@ namespace RATBVFormsPrism.Tests.ViewModels
         {
             // Act / Assert
             Assert.Throws(Is.TypeOf<ArgumentNullException>(),
-                          () => new BusLineViewModel(null, null));
+                          () => new BusLinesItemViewModel(null, null));
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace RATBVFormsPrism.Tests.ViewModels
             _fixture.Inject<BusLineModel>(null);
 
             // Act
-            var SUT = _fixture.Build<BusLineViewModel>()
+            var SUT = _fixture.Build<BusLinesItemViewModel>()
                               .OmitAutoProperties()
                               .Create();
 
@@ -104,10 +104,10 @@ namespace RATBVFormsPrism.Tests.ViewModels
             // Arrange
             _fixture.Inject(_navigationServiceMock);
 
-            var SUT = _fixture.Create<BusLineViewModel>();
+            var SUT = _fixture.Create<BusLinesItemViewModel>();
 
             // Act
-            SUT.ShowSelectedBusLineStationsCommand.Execute(It.IsAny<object>());
+            SUT.BusLineSelectedCommand.Execute(It.IsAny<object>());
 
             // Assert
             _navigationServiceMock.Verify(n => n.NavigateAsync(nameof(BusStations),

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -13,16 +14,8 @@ using Xamarin.Forms;
 
 namespace RATBVFormsPrism.ViewModels
 {
-    public class BusTimeTableViewModel : BusViewModelBase
+    public class BusTimetablesViewModel : BusViewModelBase
     {
-        #region Dependencies
-
-        private readonly IBusRepository _busRepository;
-        private readonly IUserDialogs _userDilaogsService;
-        private readonly IConnectivityService _connectivityService;
-
-        #endregion
-
         #region Fields
 
         private BusStationModel _busStation;
@@ -31,38 +24,34 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Properties
 
+        public RangeObservableCollection<BusTimeTableModel> BusTimetableWeekdays
+        {
+            get;
+
+        } = new RangeObservableCollection<BusTimeTableModel>();
+
+        public RangeObservableCollection<BusTimeTableModel> BusTimetableSaturday
+        {
+            get;
+
+        } = new RangeObservableCollection<BusTimeTableModel>();
+
+        public RangeObservableCollection<BusTimeTableModel> BusTimetableSunday
+        {
+            get;
+
+        } = new RangeObservableCollection<BusTimeTableModel>();
+
+        public RangeObservableCollection<BusTimeTableModel> BusTimetableHolidayWeekdays
+        {
+            get;
+
+        } = new RangeObservableCollection<BusTimeTableModel>();
+
         //TODO add bus line number
         public string BusLineAndStation
         {
             get => _busStation == null ? string.Empty : _busStation.Name;
-        }
-
-        private List<BusTimeTableModel> _busTimeTableWeekdays;
-        public List<BusTimeTableModel> BusTimeTableWeekdays
-        {
-            get => _busTimeTableWeekdays;
-            set => SetProperty(ref _busTimeTableWeekdays, value);
-        }
-
-        private List<BusTimeTableModel> _busTimeTableSaturday;
-        public List<BusTimeTableModel> BusTimeTableSaturday
-        {
-            get => _busTimeTableSaturday;
-            set => SetProperty(ref _busTimeTableSaturday, value);
-        }
-
-        private List<BusTimeTableModel> _busTimeTableSunday;
-        public List<BusTimeTableModel> BusTimeTableSunday
-        {
-            get => _busTimeTableSunday;
-            set => SetProperty(ref _busTimeTableSunday, value);
-        }
-
-        private List<BusTimeTableModel> _busTimeTableHolidayWeekdays;
-        public List<BusTimeTableModel> BusTimeTableHolidayWeekdays
-        {
-            get => _busTimeTableHolidayWeekdays;
-            set => SetProperty(ref _busTimeTableHolidayWeekdays, value);
         }
 
         public override string Title
@@ -97,20 +86,20 @@ namespace RATBVFormsPrism.ViewModels
         private DelegateCommand _refreshCommand;
         public ICommand RefreshCommand
         {
-            get
-            {
-                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => !IsBusy);
-                return _refreshCommand;
-            }
+            get => _refreshCommand ??= new DelegateCommand(RefreshTimetables, () => !IsBusy);
         }
 
         #endregion
 
-        #region Constructors
+        #region Constructors and Dependencies
 
-        public BusTimeTableViewModel(IBusRepository busRepository,
-                                     IUserDialogs userDialogsService,
-                                     IConnectivityService connectivityService)
+        private readonly IBusRepository _busRepository;
+        private readonly IUserDialogs _userDilaogsService;
+        private readonly IConnectivityService _connectivityService;
+
+        public BusTimetablesViewModel(IBusRepository busRepository,
+                                      IUserDialogs userDialogsService,
+                                      IConnectivityService connectivityService)
         {
             _busRepository = busRepository;
             _userDilaogsService = userDialogsService;
@@ -121,7 +110,7 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Command Methods
 
-        private async void DoRefreshCommand()
+        private async void RefreshTimetables()
         {
             if (_connectivityService.IsInternetAvailable)
             {
@@ -140,7 +129,7 @@ namespace RATBVFormsPrism.ViewModels
 
         #endregion
 
-        #region Navigation Methods
+        #region Navigation Override Methods
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
@@ -168,8 +157,8 @@ namespace RATBVFormsPrism.ViewModels
             }
 
             var busTimetables = await _busRepository.GetBusTimetablesAsync(_busStation.ScheduleLink,
-                                                                          _busStation.Id.Value,
-                                                                          isForcedRefresh);
+                                                                           _busStation.Id.Value,
+                                                                           isForcedRefresh);
 
             LastUpdated = busTimetables.FirstOrDefault()
                                        .LastUpdateDate;
@@ -179,15 +168,14 @@ namespace RATBVFormsPrism.ViewModels
 
         private void GetTimeTableByTimeOfWeek(List<BusTimeTableModel> busTimetable)
         {
-            BusTimeTableWeekdays = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.WeekDays
-                                                                                            .ToString())
-                                               .ToList();
-            BusTimeTableSaturday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Saturday
-                                                                                            .ToString())
-                                               .ToList();
-            BusTimeTableSunday = busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Sunday
-                                                                                          .ToString())
-                                             .ToList();
+            BusTimetableWeekdays.ReplaceRange(busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.WeekDays
+                                                                                                       .ToString()));
+
+            BusTimetableSaturday.ReplaceRange(busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Saturday
+                                                                                                       .ToString()));
+
+            BusTimetableSunday.ReplaceRange(busTimetable.Where(btt => btt.TimeOfWeek == TimeOfTheWeek.Sunday
+                                                                                                     .ToString()));
         }
 
         #endregion

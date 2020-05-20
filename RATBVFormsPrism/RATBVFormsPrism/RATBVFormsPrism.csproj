@@ -18,29 +18,30 @@
   <ItemGroup>
     <ProjectReference Include="..\..\RATBVData\RATBVData.Models\RATBVData.Models.csproj" />
   </ItemGroup>
+  
   <ItemGroup>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\BusDataService.cs">
+    <Compile Update="Services\BusDataService.cs">
       <DependentUpon>IBusDataService.cs</DependentUpon>
     </Compile>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\BusRepository.cs">
+    <Compile Update="Services\BusRepository.cs">
       <DependentUpon>IBusRepository.cs</DependentUpon>
     </Compile>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\ConnectivityService.cs">
+    <Compile Update="Services\ConnectivityService.cs">
       <DependentUpon>IConnectivityService.cs</DependentUpon>
     </Compile>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\DefaultHttpMessageHandler.cs">
+    <Compile Update="Services\DefaultHttpMessageHandler.cs">
       <DependentUpon>ICustomHttpMessageHandler.cs</DependentUpon>
     </Compile>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\InsecureHttpMessageHandler.cs">
+    <Compile Update="Services\InsecureHttpMessageHandler.cs">
       <DependentUpon>ICustomHttpMessageHandler.cs</DependentUpon>
     </Compile>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\DefaultHttpServiceOptions.cs">
+    <Compile Update="Services\DefaultHttpServiceOptions.cs">
       <DependentUpon>IHttpServiceOptions.cs</DependentUpon>
     </Compile>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\LocalHttpServiceOptions.cs">
+    <Compile Update="Services\LocalHttpServiceOptions.cs">
       <DependentUpon>IHttpServiceOptions.cs</DependentUpon>
     </Compile>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\HttpService.cs">
+    <Compile Update="Services\HttpService.cs">
       <DependentUpon>IHttpService.cs</DependentUpon>
     </Compile>
     <Compile Update="Services\CustomSQLiteAsyncConnection.cs">
@@ -60,6 +61,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
+    <EmbeddedResource Update="Views\BusTimetables.xaml">
+      <LogicalName>RATBVFormsPrism.Views.BusTimeTable.xaml</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -7,45 +9,34 @@ using Prism.Commands;
 using Prism.Navigation;
 using RATBVData.Models.Enums;
 using RATBVData.Models.Models;
+using RATBVFormsPrism.Constants;
 using RATBVFormsPrism.Services;
+using RATBVFormsPrism.Views;
 using Xamarin.Forms;
 
 namespace RATBVFormsPrism.ViewModels
 {
     public class BusLinesViewModel : BusViewModelBase
     {
-        #region Dependencies
-
-        private readonly IBusDataService _busDataService;
-        private readonly IBusRepository _busRepository;
-        private readonly IUserDialogs _userDilaogsService;
-        private readonly IConnectivityService _connectivityService;
-        private readonly INavigationService _navigationService;
-
-        #endregion
-
         #region Properties
 
-        private List<BusLineViewModel> _busLines;
-        public List<BusLineViewModel> BusLines
+        public RangeObservableCollection<BusLinesItemViewModel> BusLines
         {
-            get => _busLines;
-            set => SetProperty(ref _busLines, value);
-        }
+            get;
 
-        private List<BusLineViewModel> _midiBusLines;
-        public List<BusLineViewModel> MidiBusLines
-        {
-            get => _midiBusLines;
-            set => SetProperty(ref _midiBusLines, value);
-        }
+        } = new RangeObservableCollection<BusLinesItemViewModel>();
 
-        private List<BusLineViewModel> _trolleybusLines;
-        public List<BusLineViewModel> TrolleybusLines
+        public RangeObservableCollection<BusLinesItemViewModel> MidiBusLines
         {
-            get => _trolleybusLines;
-            set => SetProperty(ref _trolleybusLines, value);
-        }
+            get;
+
+        } = new RangeObservableCollection<BusLinesItemViewModel>();
+
+        public RangeObservableCollection<BusLinesItemViewModel> TrolleybusLines
+        {
+            get;
+
+        } = new RangeObservableCollection<BusLinesItemViewModel>();
 
         public override string Title
         {
@@ -79,16 +70,18 @@ namespace RATBVFormsPrism.ViewModels
         private DelegateCommand _refreshCommand;
         public ICommand RefreshCommand
         {
-            get
-            {
-                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => !IsBusy);
-                return _refreshCommand;
-            }
+            get => _refreshCommand ??= new DelegateCommand(RefreshBusLines, () => !IsBusy);
         }
 
         #endregion
 
-        #region Constructors
+        #region Constructor and Dependencies
+
+        private readonly IBusDataService _busDataService;
+        private readonly IBusRepository _busRepository;
+        private readonly IUserDialogs _userDilaogsService;
+        private readonly IConnectivityService _connectivityService;
+        private readonly INavigationService _navigationService;
 
         public BusLinesViewModel(IBusDataService busDataService,
                                  IBusRepository busRepository,
@@ -96,18 +89,18 @@ namespace RATBVFormsPrism.ViewModels
                                  IConnectivityService connectivityService,
                                  INavigationService navigationService)
         {
-            _busDataService = busDataService;
-            _busRepository = busRepository;
-            _userDilaogsService = userDialogsService;
-            _connectivityService = connectivityService;
-            _navigationService = navigationService;
+            _busDataService = busDataService ?? throw new ArgumentException(nameof(busDataService));
+            _busRepository = busRepository ?? throw new ArgumentException(nameof(busRepository));
+            _userDilaogsService = userDialogsService ?? throw new ArgumentException(nameof(userDialogsService));
+            _connectivityService = connectivityService ?? throw new ArgumentException(nameof(connectivityService));
+            _navigationService = navigationService ?? throw new ArgumentException(nameof(navigationService));
         }
 
         #endregion
 
         #region Command Methods
 
-        private async void DoRefreshCommand()
+        private async void RefreshBusLines()
         {
             if (_connectivityService.IsInternetAvailable)
             {
@@ -126,7 +119,7 @@ namespace RATBVFormsPrism.ViewModels
 
         #endregion
 
-        #region Navigation Methods
+        #region Navigation Override Methods
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
@@ -135,6 +128,7 @@ namespace RATBVFormsPrism.ViewModels
                 return;
             }
 
+            // TODO improve this and move the create tables in the Repository
             // ERROR Object not set to an instance of an object :|
             //using (_userDilaogsService.Loading("Fetching Data... "))
             //{
@@ -161,15 +155,78 @@ namespace RATBVFormsPrism.ViewModels
 
         private void GetBusLinesByType(List<BusLineModel> busLines)
         {
-            BusLines = busLines.Where(bl => bl.Type == BusTypes.Bus.ToString())
-                               .Select(busLine => new BusLineViewModel(busLine, _navigationService))
-                               .ToList();
-            MidiBusLines = busLines.Where(bl => bl.Type == BusTypes.Midibus.ToString())
-                                   .Select(busLine => new BusLineViewModel(busLine, _navigationService))
-                                   .ToList();
-            TrolleybusLines = busLines.Where(bl => bl.Type == BusTypes.Trolleybus.ToString())
-                                      .Select(busLine => new BusLineViewModel(busLine, _navigationService))
-                                      .ToList();
+            BusLines.ReplaceRange(busLines.Where(bl => bl.Type == BusTypes.Bus.ToString())
+                                          .Select(busLine => new BusLinesItemViewModel(busLine,
+                                                                                       _navigationService)));
+
+            MidiBusLines.ReplaceRange(busLines.Where(bl => bl.Type == BusTypes.Midibus.ToString())
+                                              .Select(busLine => new BusLinesItemViewModel(busLine,
+                                                                                           _navigationService)));
+
+            TrolleybusLines.ReplaceRange(busLines.Where(bl => bl.Type == BusTypes.Trolleybus.ToString())
+                                                 .Select(busLine => new BusLinesItemViewModel(busLine,
+                                                                                              _navigationService)));
+        }
+
+        #endregion
+
+        #region BusLinesItemViewModel Class
+
+        public class BusLinesItemViewModel : BusViewModelBase
+        {
+            #region Fields
+
+            private readonly BusLineModel _busLine;
+
+            #endregion
+
+            #region Properties
+
+            public string Name { get; }
+            public string Route { get; }
+
+            #endregion
+
+            #region Command Properties
+
+            private DelegateCommand _busLineSelectedCommand;
+            public ICommand BusLineSelectedCommand
+            {
+                get => _busLineSelectedCommand ??= new DelegateCommand(ShowStationsForSelectedBusLine);
+            }
+
+            #endregion
+
+            #region Constructor and Dependencies
+
+            private readonly INavigationService _navigationService;
+
+            public BusLinesItemViewModel(BusLineModel busLine,
+                                         INavigationService navigationService)
+            {
+                _busLine = busLine;
+                _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+
+                Name = _busLine?.Name;
+                Route = _busLine?.Route;
+            }
+
+            #endregion
+
+            #region Command Methods
+
+            private async void ShowStationsForSelectedBusLine()
+            {
+                var parameters = new NavigationParameters
+            {
+                { AppNavigation.BusLine, _busLine }
+            };
+
+                //await _navigationService.Navigate($"{nameof(RATBVNavigation)}/{nameof(BusLines)}/{nameof(BusStations)}", parameters);
+                await _navigationService.NavigateAsync(nameof(BusStations), parameters);
+            }
+
+            #endregion
         }
 
         #endregion

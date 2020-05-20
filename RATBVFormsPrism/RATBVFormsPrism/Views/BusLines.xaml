@@ -50,7 +50,7 @@
                     <StackLayout Padding="{x:OnPlatform Android='5,0,0,0',
                                                         iOS='15,0,0,0'}">
                         <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ShowSelectedBusLineStationsCommand}"/>
+                            <TapGestureRecognizer Command="{Binding BusLineSelectedCommand}"/>
                         </StackLayout.GestureRecognizers>
                         <Label Style="{StaticResource NameLabelStyle}"
                                Text="{Binding Name}"/>

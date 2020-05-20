@@ -108,7 +108,7 @@ namespace RATBVFormsPrism
             containerRegistry.RegisterForNavigation<RATBVNavigation>();
             containerRegistry.RegisterForNavigation<BusLines>();
             containerRegistry.RegisterForNavigation<BusStations>();
-            containerRegistry.RegisterForNavigation<BusTimeTable>();
+            containerRegistry.RegisterForNavigation<BusTimetables>();
 
             #endregion
         }

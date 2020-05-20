@@ -5,7 +5,7 @@
             android:TabbedPage.ToolbarPlacement="Bottom"
             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
             prism:ViewModelLocator.AutowireViewModel="True"
-            x:Class="RATBVFormsPrism.Views.BusTimeTable"
+            x:Class="RATBVFormsPrism.Views.BusTimetables"
             Title="{Binding Title}">
     <TabbedPage.Resources>
         <ResourceDictionary>
@@ -40,7 +40,7 @@
                         Value="0,5,5,0"/>
             </Style>
 
-            <ControlTemplate x:Key="BusTimeTableTabPageTemplate">
+            <ControlTemplate x:Key="BusTimetablesTabPageTemplate">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
@@ -58,12 +58,12 @@
                                Text="{TemplateBinding BindingContext.LastUpdated,
                                                       StringFormat='Updated on {0}'}"/>
                     </StackLayout>
-                    <Label Text="Hour"
-                           Grid.Row="1"
+                    <Label Grid.Row="1"
+                           Text="Hour"
                            Style="{StaticResource TitleLabelStyle}"/>
-                    <Label Text="Minutes"
-                           Grid.Row="1"
-                           Grid.Column="1" 
+                    <Label Grid.Row="1"
+                           Grid.Column="1"
+                           Text="Minutes"
                            Style="{StaticResource TitleLabelStyle}"/>
 
                     <ContentPresenter Grid.Row="2"
@@ -72,7 +72,7 @@
                 </Grid>
             </ControlTemplate>
 
-            <DataTemplate x:Key="BusTimeTableListViewDataTemplate">
+            <DataTemplate x:Key="BusTimetableListViewDataTemplate">
                 <ViewCell>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -96,33 +96,33 @@
     <!--Tabbed Page Children-->
     <TabbedPage.Children>
         <ContentPage Title="Week Days"
-                     ControlTemplate="{StaticResource BusTimeTableTabPageTemplate}">
+                     ControlTemplate="{StaticResource BusTimetablesTabPageTemplate}">
             <RefreshView IsRefreshing="{Binding IsBusy}"
                          Command="{Binding RefreshCommand}">
                 <ListView VerticalOptions="Start"
                           ItemSelected="BusTime_OnItemSelected"
-                          ItemsSource="{Binding BusTimeTableWeekdays}"
-                          ItemTemplate="{StaticResource BusTimeTableListViewDataTemplate}"/>
+                          ItemsSource="{Binding BusTimetableWeekdays}"
+                          ItemTemplate="{StaticResource BusTimetableListViewDataTemplate}"/>
             </RefreshView>
         </ContentPage>
         <ContentPage Title="Saturday"
-                     ControlTemplate="{StaticResource BusTimeTableTabPageTemplate}">
+                     ControlTemplate="{StaticResource BusTimetablesTabPageTemplate}">
             <RefreshView IsRefreshing="{Binding IsBusy}"
                          Command="{Binding RefreshCommand}">
                 <ListView VerticalOptions="Start"
                           ItemSelected="BusTime_OnItemSelected"
-                          ItemsSource="{Binding BusTimeTableSaturday}"
-                          ItemTemplate="{StaticResource BusTimeTableListViewDataTemplate}"/>
+                          ItemsSource="{Binding BusTimetableSaturday}"
+                          ItemTemplate="{StaticResource BusTimetableListViewDataTemplate}"/>
             </RefreshView>
         </ContentPage>
         <ContentPage Title="Sunday"
-                     ControlTemplate="{StaticResource BusTimeTableTabPageTemplate}">
+                     ControlTemplate="{StaticResource BusTimetablesTabPageTemplate}">
             <RefreshView IsRefreshing="{Binding IsBusy}"
                          Command="{Binding RefreshCommand}">
                 <ListView VerticalOptions="Start"
                           ItemSelected="BusTime_OnItemSelected"
-                          ItemsSource="{Binding BusTimeTableSunday}"
-                          ItemTemplate="{StaticResource BusTimeTableListViewDataTemplate}"/>
+                          ItemsSource="{Binding BusTimetableSunday}"
+                          ItemTemplate="{StaticResource BusTimetableListViewDataTemplate}"/>
             </RefreshView>
         </ContentPage>
   </TabbedPage.Children>

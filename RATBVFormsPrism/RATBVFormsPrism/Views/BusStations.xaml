@@ -16,14 +16,14 @@
                              IconImageSource="{x:OnPlatform Android='ic_action_return.png',
                                                             iOS='Return.png',
                                                             UWP='Assets/reverse.png'}"
-                             Command="{Binding ReverseCommand}"/>
+                             Command="{Binding ReverseTripCommand}"/>
                 <ToolbarItem Text="Download"
                              Order="Primary"
                              Priority="1"
                              IconImageSource="{x:OnPlatform Android='ic_action_download.png',
                                                             iOS='Download.png',
                                                             UWP='Assets/download.png'}"
-                             Command="{Binding DownloadCommand}"/>            
+                             Command="{Binding DownloadStationsTimetablesCommand}"/>            
             </ContentPage.ToolbarItems>
 
             <StackLayout>
@@ -44,7 +44,7 @@
                                     <StackLayout Padding="{x:OnPlatform Android='5,0,0,0',
                                                                         iOS='15,0,0,0'}">
                                         <StackLayout.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding ShowSelectedBusTimeTableCommand}"/>
+                                            <TapGestureRecognizer Command="{Binding BusStationSelectedCommand}"/>
                                         </StackLayout.GestureRecognizers>
                                         <Label FontSize="Medium"
                                                FontAttributes="Bold"

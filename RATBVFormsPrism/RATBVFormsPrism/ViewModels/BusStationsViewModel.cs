@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -9,21 +10,13 @@ using Prism.Navigation;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
 using RATBVFormsPrism.Services;
+using RATBVFormsPrism.Views;
 using Xamarin.Forms;
 
 namespace RATBVFormsPrism.ViewModels
 {
     public class BusStationsViewModel : BusViewModelBase
     {
-        #region Dependencies
-
-        private readonly IBusRepository _busRepository;
-        private readonly IUserDialogs _userDilaogsService;
-        private readonly IConnectivityService _connectivityService;
-        private readonly INavigationService _navigationService;
-
-        #endregion
-
         #region Fields
 
         private string _directionLink = string.Empty;
@@ -32,6 +25,12 @@ namespace RATBVFormsPrism.ViewModels
         #endregion
 
         #region Properties
+
+        public RangeObservableCollection<BusStationsItemViewModel> BusStations
+        {
+            get;
+
+        } = new RangeObservableCollection<BusStationsItemViewModel>();
 
         private string _direction = string.Empty;
         public string Direction
@@ -52,13 +51,6 @@ namespace RATBVFormsPrism.ViewModels
         {
             get => _busLineName;
             set => SetProperty(ref _busLineName, value);
-        }
-
-        private List<BusStationViewModel> _busStations;
-        public List<BusStationViewModel> BusStations
-        {
-            get => _busStations;
-            set => SetProperty(ref _busStations, value);
         }
 
         public override string Title
@@ -90,39 +82,32 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Command Properties
 
-        private DelegateCommand _reverseCommand;
-        public ICommand ReverseCommand
+        private DelegateCommand _reverseTripCommand;
+        public ICommand ReverseTripCommand
         {
-            get
-            {
-                _reverseCommand ??= new DelegateCommand(DoReverseCommand);
-                return _reverseCommand;
-            }
+            get => _reverseTripCommand ??= new DelegateCommand(ShowReverseTripStations);
         }
 
-        private DelegateCommand _downloadCommand;
-        public ICommand DownloadCommand
+        private DelegateCommand _downloadStationsTimetablesCommand;
+        public ICommand DownloadStationsTimetablesCommand
         {
-            get
-            {
-                _downloadCommand ??= new DelegateCommand(DoDownloadCommand);
-                return _downloadCommand;
-            }
+            get => _downloadStationsTimetablesCommand ??= new DelegateCommand(DownloadAllStationTimetables);
         }
 
         private DelegateCommand _refreshCommand;
         public ICommand RefreshCommand
         {
-            get
-            {
-                _refreshCommand ??= new DelegateCommand(DoRefreshCommand, () => !IsBusy);
-                return _refreshCommand;
-            }
+            get => _refreshCommand ??= new DelegateCommand(RefreshBusStations, () => !IsBusy);
         }
 
         #endregion
 
-        #region Constructors
+        #region Constructors and Dependencies
+
+        private readonly IBusRepository _busRepository;
+        private readonly IUserDialogs _userDilaogsService;
+        private readonly IConnectivityService _connectivityService;
+        private readonly INavigationService _navigationService;
 
         public BusStationsViewModel(IBusRepository busRepository,
                                     IUserDialogs userDialogsService,
@@ -139,7 +124,7 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Command Methods
 
-        private async void DoReverseCommand()
+        private async void ShowReverseTripStations()
         {
             using (_userDilaogsService.Loading("Fetching Data... "))
             {
@@ -148,7 +133,7 @@ namespace RATBVFormsPrism.ViewModels
             }
         }
 
-        private async void DoRefreshCommand()
+        private async void RefreshBusStations()
         {
             if (_connectivityService.IsInternetAvailable)
             {
@@ -166,7 +151,7 @@ namespace RATBVFormsPrism.ViewModels
             IsBusy = false;
         }
 
-        private async void DoDownloadCommand()
+        private async void DownloadAllStationTimetables()
         {
             if (!_connectivityService.IsInternetAvailable)
             {
@@ -187,7 +172,7 @@ namespace RATBVFormsPrism.ViewModels
 
         #endregion
 
-        #region Navigation Methods
+        #region Navigation Override Methods
 
         public async override void OnNavigatedTo(NavigationParameters parameters)
         {
@@ -253,8 +238,70 @@ namespace RATBVFormsPrism.ViewModels
             LastUpdated = busStations.FirstOrDefault()
                                      .LastUpdateDate;
 
-            BusStations = busStations.Select(busStation => new BusStationViewModel(busStation, _navigationService))
-                                     .ToList();
+            BusStations.ReplaceRange(busStations.Select(busStation => new BusStationsItemViewModel(busStation,
+                                                                                                   _navigationService)));
+        }
+
+        #endregion
+
+        #region BusStationsItemViewModel Class
+
+        public class BusStationsItemViewModel : BusViewModelBase
+        {
+            #region Fields
+
+            private readonly BusStationModel _busStation;
+
+            #endregion
+
+            #region Properties
+
+            public int Id { get; }
+            public string Name { get; }
+            public string ScheduleLink { get; }
+
+            #endregion
+
+            #region Command Properties
+
+            private DelegateCommand _busStationSelectedCommand;
+            public ICommand BusStationSelectedCommand
+            {
+                get => _busStationSelectedCommand ??= new DelegateCommand(ShowTimetablesForSelectedBusStation);
+            }
+
+            #endregion
+
+            #region Constructors and Dependencies
+
+            private readonly INavigationService _navigationService;
+
+            public BusStationsItemViewModel(BusStationModel busStation,
+                                            INavigationService navigationService)
+            {
+                _busStation = busStation;
+                _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+
+                Id = _busStation?.Id.Value ?? 0;
+                Name = _busStation?.Name;
+                ScheduleLink = _busStation?.ScheduleLink;
+            }
+
+            #endregion
+
+            #region Command Methods
+
+            private async void ShowTimetablesForSelectedBusStation()
+            {
+                var parameters = new NavigationParameters
+            {
+                { AppNavigation.BusStation, _busStation }
+            };
+
+                await _navigationService.NavigateAsync(nameof(BusTimetables), parameters);
+            }
+
+            #endregion
         }
 
         #endregion
