@@ -5,8 +5,8 @@ using Moq;
 using NUnit.Framework;
 using Prism.Navigation;
 using RATBVData.Models.Models;
-using RATBVFormsPrism.ViewModels;
 using RATBVFormsPrism.Views;
+using static RATBVFormsPrism.ViewModels.BusStationsViewModel;
 
 namespace RATBVFormsPrism.Tests.ViewModels
 {
@@ -69,7 +69,7 @@ namespace RATBVFormsPrism.Tests.ViewModels
             _fixture.Inject(mockedBusStation);
 
             // Act
-            var SUT = _fixture.Build<BusStationViewModel>()
+            var SUT = _fixture.Build<BusStationsItemViewModel>()
                               .OmitAutoProperties()
                               .Create();
 
@@ -84,7 +84,7 @@ namespace RATBVFormsPrism.Tests.ViewModels
         {
             // Act / Assert
             Assert.Throws(Is.TypeOf<ArgumentNullException>(),
-                          () => new BusStationViewModel(null, null));
+                          () => new BusStationsItemViewModel(null, null));
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace RATBVFormsPrism.Tests.ViewModels
             _fixture.Inject<BusStationModel>(null);
 
             // Act
-            var SUT = _fixture.Build<BusStationViewModel>()
+            var SUT = _fixture.Build<BusStationsItemViewModel>()
                               .OmitAutoProperties()
                               .Create();
 
@@ -111,13 +111,13 @@ namespace RATBVFormsPrism.Tests.ViewModels
             // Arrange
             _fixture.Inject(_navigationServiceMock);
 
-            var SUT = _fixture.Create<BusStationViewModel>();
+            var SUT = _fixture.Create<BusStationsItemViewModel>();
 
             // Act
-            SUT.ShowSelectedBusTimeTableCommand.Execute(It.IsAny<object>());
+            SUT.BusStationSelectedCommand.Execute(It.IsAny<object>());
 
             // Assert
-            _navigationServiceMock.Verify(n => n.NavigateAsync(nameof(BusTimeTable),
+            _navigationServiceMock.Verify(n => n.NavigateAsync(nameof(BusTimetables),
                                                                It.IsAny<NavigationParameters>()),
                                           Times.Once);
         }
