@@ -8,6 +8,7 @@ namespace RATBVFormsPrism.Droid.Services
 	{
         #region ISQLiteService Methods
 
+        [Obsolete]
         public ISQLiteConnection GetConnection(string databaseName)
         {
             var path = GetPath(databaseName);
