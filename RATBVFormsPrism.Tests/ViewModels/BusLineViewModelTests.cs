@@ -48,6 +48,17 @@ namespace RATBVFormsPrism.Tests.ViewModels
 
         #endregion
 
+        #region Test Case Sources
+
+        private static readonly object[] BusLinesItemViewModelNullParameterCases =
+        {
+            new object[] { null, null},
+            new object[] { new BusLineModel(), null },
+            new object[] { null, new Mock<INavigationService>().Object },
+        };
+
+        #endregion
+
         #region Test Methods
 
         [Test]
@@ -73,29 +84,13 @@ namespace RATBVFormsPrism.Tests.ViewModels
             Assert.That(SUT.Route, Is.EqualTo(expectedRoute));
         }
 
-        [Test]
-        public void ShouldGetExceptionFromNullServiceParametersInConstructor()
+        [Test, TestCaseSource(nameof(BusLinesItemViewModelNullParameterCases))]
+        public void ShouldGetExceptionFromNullParametersInConstructor(BusLineModel busLineModel,
+                                                                      INavigationService navigationService)
         {
             // Act / Assert
             Assert.Throws(Is.TypeOf<ArgumentNullException>(),
-                          () => new BusLinesItemViewModel(null, null));
-        }
-
-        [Test]
-        public void ShouldSetNullParametersInTheConstructor()
-        {
-            // Arrange
-            _fixture.Inject(_navigationServiceMock);
-            _fixture.Inject<BusLineModel>(null);
-
-            // Act
-            var SUT = _fixture.Build<BusLinesItemViewModel>()
-                              .OmitAutoProperties()
-                              .Create();
-
-            // Assert
-            Assert.That(SUT.Name, Is.EqualTo(null));
-            Assert.That(SUT.Route, Is.EqualTo(null));
+                          () => new BusLinesItemViewModel(busLineModel, navigationService));
         }
 
         [Test]

@@ -204,7 +204,7 @@ namespace RATBVFormsPrism.ViewModels
             public BusLinesItemViewModel(BusLineModel busLine,
                                          INavigationService navigationService)
             {
-                _busLine = busLine;
+                _busLine = busLine ?? throw new ArgumentNullException(nameof(busLine));
                 _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
                 Name = _busLine.Name;

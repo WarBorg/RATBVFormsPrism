@@ -92,7 +92,7 @@ namespace RATBVFormsPrism.Tests.Services
         #region Bus Lines Test Methods
 
         [Test]
-        [NUnit.Framework.Ignore("Ignored because I cannot mock second grade methods: .CountAsync()")]
+        [Ignore("Ignored because I cannot mock second grade methods: .CountAsync()")]
         public async Task ShouldGetDatabaseTables()
         {
             // Arrange
@@ -113,8 +113,8 @@ namespace RATBVFormsPrism.Tests.Services
         }        
 
         [Test]
-        [NUnit.Framework.Ignore("Ignored because I cannot mock Table<T>")]
-        public async Task ShouldInsertOrReplaceBusLine()
+        [Ignore("Ignored because I cannot mock Table<T>")]
+        public void ShouldInsertOrReplaceBusLine()
         {
             // Arrange
             var expecteReplacedBusLinesCount = 1;
@@ -141,8 +141,8 @@ namespace RATBVFormsPrism.Tests.Services
         #region Insert -- Update -- Delete test we dont use anymore
 
         [Test]
-        [NUnit.Framework.Ignore("Ignored because we dont use this functionality")]
-        public async Task ShouldGetBusLineById()
+        [Ignore("Ignored because we dont use this functionality")]
+        public void ShouldGetBusLineById()
         {
             // Arrange
             _fixture.Inject(_sqliteAsyncConnectionMock);
@@ -158,8 +158,8 @@ namespace RATBVFormsPrism.Tests.Services
         }
 
         [Test]
-        [NUnit.Framework.Ignore("Ignored because we dont use this functionality")]
-        public async Task ShouldInsertBusLine()
+        [Ignore("Ignored because we dont use this functionality")]
+        public void ShouldInsertBusLine()
         {
             // Arrange
             var expectedInsertedBusLinesCount = 1;
@@ -182,8 +182,8 @@ namespace RATBVFormsPrism.Tests.Services
         }
 
         [Test]
-        [NUnit.Framework.Ignore("Ignored because we dont use this functionality")]
-        public async Task ShouldUpdateBusLine()
+        [Ignore("Ignored because we dont use this functionality")]
+        public void ShouldUpdateBusLine()
         {
             // Arrange
             var expectedUpdatedBusLinesCount = 1;
@@ -206,8 +206,8 @@ namespace RATBVFormsPrism.Tests.Services
         }
 
         [Test]
-        [NUnit.Framework.Ignore("Ignored because we dont use this functionality")]
-        public async Task ShouldDeleteBusLine()
+        [Ignore("Ignored because we dont use this functionality")]
+        public void ShouldDeleteBusLine()
         {
             // Arrange
             var expectedDeletedBusLinesCount = 1;
