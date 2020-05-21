@@ -55,7 +55,7 @@ namespace RATBVFormsPrism.Services
         public async Task<int> CountBusLinesAsync()
         {
             return await _asyncConnection.Table<BusLineModel>()
-                                        ?.CountAsync();
+                                         .CountAsync();
         }
 
         public async Task<List<BusLineModel>> GetBusLinesAsync()
@@ -203,7 +203,7 @@ namespace RATBVFormsPrism.Services
 
         #region Bus Lines Methods
 
-        private async Task<List<BusLineModel>> GetBusLinesByNameAsync(string nameFilter = null)
+        private async Task<List<BusLineModel>> GetBusLinesByNameAsync(string? nameFilter = null)
         {
             if (nameFilter == null)
             {
@@ -243,7 +243,7 @@ namespace RATBVFormsPrism.Services
 
         private async Task<List<BusStationModel>> GetBusStationsByNameAsync(int busId,
                                                                            string direction,
-                                                                           string nameFilter = null)
+                                                                           string? nameFilter = null)
         {
             if (nameFilter == null)
             {

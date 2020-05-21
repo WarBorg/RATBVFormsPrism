@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -59,10 +60,5 @@
     <Compile Update="Services\DefaultSQLiteConnectionFactory.cs">
       <DependentUpon>ISQLiteConnectionFactory.cs</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Views\BusTimetables.xaml">
-      <LogicalName>RATBVFormsPrism.Views.BusTimeTable.xaml</LogicalName>
-    </EmbeddedResource>
   </ItemGroup>
 </Project>

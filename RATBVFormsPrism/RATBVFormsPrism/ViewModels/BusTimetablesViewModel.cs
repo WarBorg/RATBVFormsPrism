@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace RATBVFormsPrism.ViewModels
     {
         #region Fields
 
-        private BusStationModel _busStation;
+        private BusStationModel? _busStation;
 
         #endregion
 
@@ -83,7 +84,7 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Command Properties
 
-        private DelegateCommand _refreshCommand;
+        private DelegateCommand? _refreshCommand;
         public ICommand RefreshCommand
         {
             get => _refreshCommand ??= new DelegateCommand(RefreshTimetables, () => !IsBusy);
@@ -101,9 +102,9 @@ namespace RATBVFormsPrism.ViewModels
                                       IUserDialogs userDialogsService,
                                       IConnectivityService connectivityService)
         {
-            _busRepository = busRepository;
-            _userDilaogsService = userDialogsService;
-            _connectivityService = connectivityService;
+            _busRepository = busRepository ?? throw new ArgumentException(nameof(busRepository));
+            _userDilaogsService = userDialogsService ?? throw new ArgumentException(nameof(userDialogsService));
+            _connectivityService = connectivityService ?? throw new ArgumentException(nameof(connectivityService));
         }
 
         #endregion
@@ -153,6 +154,15 @@ namespace RATBVFormsPrism.ViewModels
         {
             if (_busStation == null)
             {
+                _userDilaogsService.Toast("No Timetables found for selected bus station");
+
+                return;
+            }
+
+            if (_busStation.Id == null)
+            {
+                _userDilaogsService.Toast($"Timetable database error for {_busStation.Name} bus station");
+
                 return;
             }
 

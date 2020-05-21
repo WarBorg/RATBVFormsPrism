@@ -165,7 +165,7 @@ namespace RATBVFormsPrism.Services
                     var busTimetables = await _busApi.GetBusTimeTables(busStation.ScheduleLink);
 
                     await InsertBusTimetablesInDatabaseAsync(busTimetables,
-                                                             busStation.Id.Value,
+                                                             busStation.Id ?? 0,
                                                              lastUpdated);
                 }
             }
@@ -201,7 +201,7 @@ namespace RATBVFormsPrism.Services
         private async Task InsertBusStationsInDatabaseAsync(IEnumerable<BusStationModel> busStations,
                                                             int busLineId,
                                                             string lastUpdated,
-                                                            string direction = null)
+                                                            string? direction = null)
         {
             foreach (var busStation in busStations)
             {

@@ -67,7 +67,7 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Command Properties
 
-        private DelegateCommand _refreshCommand;
+        private DelegateCommand? _refreshCommand;
         public ICommand RefreshCommand
         {
             get => _refreshCommand ??= new DelegateCommand(RefreshBusLines, () => !IsBusy);
@@ -189,7 +189,7 @@ namespace RATBVFormsPrism.ViewModels
 
             #region Command Properties
 
-            private DelegateCommand _busLineSelectedCommand;
+            private DelegateCommand? _busLineSelectedCommand;
             public ICommand BusLineSelectedCommand
             {
                 get => _busLineSelectedCommand ??= new DelegateCommand(ShowStationsForSelectedBusLine);
@@ -207,8 +207,8 @@ namespace RATBVFormsPrism.ViewModels
                 _busLine = busLine;
                 _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
-                Name = _busLine?.Name;
-                Route = _busLine?.Route;
+                Name = _busLine.Name;
+                Route = _busLine.Route;
             }
 
             #endregion

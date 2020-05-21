@@ -19,7 +19,7 @@ namespace RATBVFormsPrism.ViewModels
         #region Fields
 
         private string _directionLink = string.Empty;
-        private BusLineModel _busLine;
+        private BusLineModel? _busLine;
 
         #endregion
 
@@ -81,19 +81,19 @@ namespace RATBVFormsPrism.ViewModels
 
         #region Command Properties
 
-        private DelegateCommand _reverseTripCommand;
+        private DelegateCommand? _reverseTripCommand;
         public ICommand ReverseTripCommand
         {
             get => _reverseTripCommand ??= new DelegateCommand(ShowReverseTripStations);
         }
 
-        private DelegateCommand _downloadStationsTimetablesCommand;
+        private DelegateCommand? _downloadStationsTimetablesCommand;
         public ICommand DownloadStationsTimetablesCommand
         {
             get => _downloadStationsTimetablesCommand ??= new DelegateCommand(DownloadAllStationTimetables);
         }
 
-        private DelegateCommand _refreshCommand;
+        private DelegateCommand? _refreshCommand;
         public ICommand RefreshCommand
         {
             get => _refreshCommand ??= new DelegateCommand(RefreshBusStations, () => !IsBusy);
@@ -113,10 +113,10 @@ namespace RATBVFormsPrism.ViewModels
                                     IConnectivityService connectivityService,
                                     INavigationService navigationService)
         {
-            _busRepository = busRepository;
-            _userDilaogsService = userDialogsService;
-            _connectivityService = connectivityService;
-            _navigationService = navigationService;
+            _busRepository = busRepository ?? throw new ArgumentException(nameof(busRepository));
+            _userDilaogsService = userDialogsService ?? throw new ArgumentException(nameof(userDialogsService));
+            _connectivityService = connectivityService ?? throw new ArgumentException(nameof(connectivityService));
+            _navigationService = navigationService ?? throw new ArgumentException(nameof(navigationService));
         }
 
         #endregion Constructors
@@ -158,6 +158,13 @@ namespace RATBVFormsPrism.ViewModels
 
                 return;
             }
+
+            if (_busLine == null)
+            {
+                _userDilaogsService.Toast("No Stations found for selected bus line");
+
+                return;
+            }                
 
             using (_userDilaogsService.Loading("Downlaoding Time Tables... "))
             {
@@ -202,6 +209,8 @@ namespace RATBVFormsPrism.ViewModels
         {
             if (_busLine == null)
             {
+                _userDilaogsService.Toast("No Stations found for selected bus line");
+
                 return;
             }
 
@@ -263,7 +272,7 @@ namespace RATBVFormsPrism.ViewModels
 
             #region Command Properties
 
-            private DelegateCommand _busStationSelectedCommand;
+            private DelegateCommand? _busStationSelectedCommand;
             public ICommand BusStationSelectedCommand
             {
                 get => _busStationSelectedCommand ??= new DelegateCommand(ShowTimetablesForSelectedBusStation);
@@ -281,9 +290,9 @@ namespace RATBVFormsPrism.ViewModels
                 _busStation = busStation;
                 _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
-                Id = _busStation?.Id.Value ?? 0;
-                Name = _busStation?.Name;
-                ScheduleLink = _busStation?.ScheduleLink;
+                Id = _busStation.Id ?? 0;
+                Name = _busStation.Name;
+                ScheduleLink = _busStation.ScheduleLink;
             }
 
             #endregion
