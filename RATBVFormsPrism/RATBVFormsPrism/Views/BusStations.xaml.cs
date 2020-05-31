@@ -2,7 +2,7 @@
 
 namespace RATBVFormsPrism.Views
 {
-    public partial class BusStations : TabbedPage
+    public partial class BusStations : ContentPage
     {
         public BusStations()
         {
