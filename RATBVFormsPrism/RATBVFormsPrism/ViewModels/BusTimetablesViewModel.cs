@@ -10,6 +10,7 @@ using Prism.Navigation;
 using RATBVData.Models.Enums;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
+using RATBVFormsPrism.Exceptions;
 using RATBVFormsPrism.Services;
 using Xamarin.Forms;
 
@@ -49,7 +50,7 @@ namespace RATBVFormsPrism.ViewModels
 
         } = new RangeObservableCollection<BusTimeTableModel>();
 
-        //TODO add bus line number
+        // TODO Add bus line number
         public string BusLineAndStation
         {
             get => _busStation == null ? string.Empty : _busStation.Name;
@@ -166,14 +167,26 @@ namespace RATBVFormsPrism.ViewModels
                 return;
             }
 
-            var busTimetables = await _busRepository.GetBusTimetablesAsync(_busStation.ScheduleLink,
-                                                                           _busStation.Id.Value,
-                                                                           isForcedRefresh);
+            try
+            {
+                var busTimetables = await _busRepository.GetBusTimetablesAsync(_busStation.ScheduleLink,
+                                                                               _busStation.Id.Value,
+                                                                               isForcedRefresh);
 
-            LastUpdated = busTimetables.FirstOrDefault()
-                                       .LastUpdateDate;
+                LastUpdated = busTimetables.FirstOrDefault()
+                                           .LastUpdateDate;
 
-            GetTimeTableByTimeOfWeek(busTimetables);
+                GetTimeTableByTimeOfWeek(busTimetables);
+            }
+            catch (NoInternetException)
+            {
+                _userDilaogsService.Toast("Internet connection is necessary to get bus timetables",
+                                          dismissTimer: TimeSpan.FromSeconds(5));
+            }
+            catch (Exception)
+            {
+                _userDilaogsService.Toast("Something went wrong when getting bus timetables");
+            }
         }
 
         private void GetTimeTableByTimeOfWeek(List<BusTimeTableModel> busTimetable)

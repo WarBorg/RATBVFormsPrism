@@ -4,26 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
+using RATBVFormsPrism.Exceptions;
 using Refit;
 
 namespace RATBVFormsPrism.Services
 {
     public class BusRepository : IBusRepository
     {
-        #region Dependencies
+        #region Constructors and Dependencies
 
         private readonly IBusApi _busApi;
         private readonly IBusDataService _busDataService;
-
-        #endregion
-
-        #region Constructors
+        private readonly IConnectivityService _connectivityService;
 
         public BusRepository(IBusApi busApi,
-                             IBusDataService busDataService)
+                             IBusDataService busDataService,
+                             IConnectivityService connectivityService)
         {
-            _busApi = busApi;
-            _busDataService = busDataService;
+            _busApi = busApi ?? throw new ArgumentException(nameof(busApi));
+            _busDataService = busDataService ?? throw new ArgumentException(nameof(busDataService));
+            _connectivityService = connectivityService ?? throw new ArgumentException(nameof(connectivityService));
         }
 
         #endregion
@@ -38,6 +38,11 @@ namespace RATBVFormsPrism.Services
 
                 if (isForcedRefresh || busLinesCount == 0)
                 {
+                    if (!_connectivityService.IsInternetAvailable)
+                    {
+                        throw new NoInternetException();
+                    }
+
                     var busLines = await _busApi.GetBusLines();
 
                     var lastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
@@ -70,9 +75,13 @@ namespace RATBVFormsPrism.Services
             {
                 var busStationsCount = await _busDataService.CountBusStationsByBusLineIdAndDirectionAsync(busLineId,
                                                                                                           direction);
-
                 if (isForcedRefresh || busStationsCount == 0)
                 {
+                    if (!_connectivityService.IsInternetAvailable)
+                    {
+                        throw new NoInternetException();
+                    }
+
                     var busStations = await _busApi.GetBusStations(directionLink);
 
                     var lastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);
@@ -110,6 +119,11 @@ namespace RATBVFormsPrism.Services
 
                 if (isForcedRefresh || busTimeTableCount == 0)
                 {
+                    if (!_connectivityService.IsInternetAvailable)
+                    {
+                        throw new NoInternetException();
+                    }
+
                     var busTimetables = await _busApi.GetBusTimeTables(scheduleLink);
 
                     var lastUpdated = string.Format("{0:d} {1:HH:mm}", DateTime.Now.Date, DateTime.Now);

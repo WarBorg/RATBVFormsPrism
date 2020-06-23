@@ -8,6 +8,7 @@ using Prism.Commands;
 using Prism.Navigation;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
+using RATBVFormsPrism.Exceptions;
 using RATBVFormsPrism.Services;
 using RATBVFormsPrism.Views;
 using Xamarin.Forms;
@@ -238,16 +239,28 @@ namespace RATBVFormsPrism.ViewModels
                 }
             }
 
-            var busStations = await _busRepository.GetBusStationsAsync(_directionLink,
-                                                                       Direction,
-                                                                       _busLine.Id,
-                                                                       isRefresh);
+            try
+            {
+                var busStations = await _busRepository.GetBusStationsAsync(_directionLink,
+                                                                           Direction,
+                                                                           _busLine.Id,
+                                                                           isRefresh);
 
-            LastUpdated = busStations.FirstOrDefault()
-                                     .LastUpdateDate;
+                LastUpdated = busStations.FirstOrDefault()
+                                         .LastUpdateDate;
 
-            BusStations.ReplaceRange(busStations.Select(busStation => new BusStationsItemViewModel(busStation,
-                                                                                                   _navigationService)));
+                BusStations.ReplaceRange(busStations.Select(busStation => new BusStationsItemViewModel(busStation,
+                                                                                                       _navigationService)));
+            }
+            catch (NoInternetException)
+            {
+                _userDilaogsService.Toast("Internet connection is necessary to get bus stations",
+                                          dismissTimer: TimeSpan.FromSeconds(5));
+            }
+            catch (Exception)
+            {
+                _userDilaogsService.Toast("Something went wrong when getting bus stations");
+            }
         }
 
         #endregion

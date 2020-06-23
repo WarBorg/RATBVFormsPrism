@@ -37,7 +37,7 @@
                     <StackLayout Style="{StaticResource LastUpdatedStackLayoutStyle}">
                         <Label Style="{StaticResource LastUpdatedLabelStyle}"
                                Text="{TemplateBinding BindingContext.LastUpdated,
-                                                      StringFormat='Updated on {0}'}" />
+                                                      StringFormat='Last update: {0}'}" />
                     </StackLayout>
 
                     <ContentPresenter />

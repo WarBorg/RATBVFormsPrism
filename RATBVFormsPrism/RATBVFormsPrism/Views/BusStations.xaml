@@ -29,7 +29,7 @@
                                               UWP=False}">
             <Label FontSize="Medium"
                    HorizontalOptions="End"
-                   Text="{Binding LastUpdated, StringFormat='Updated on {0}'}" />
+                   Text="{Binding LastUpdated, StringFormat='Last update: {0}'}" />
         </StackLayout>
         <RefreshView IsRefreshing="{Binding IsBusy}"
                      Command="{Binding RefreshCommand}">

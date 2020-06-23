@@ -10,6 +10,7 @@ using Prism.Navigation;
 using RATBVData.Models.Enums;
 using RATBVData.Models.Models;
 using RATBVFormsPrism.Constants;
+using RATBVFormsPrism.Exceptions;
 using RATBVFormsPrism.Services;
 using RATBVFormsPrism.Views;
 using Xamarin.Forms;
@@ -145,12 +146,24 @@ namespace RATBVFormsPrism.ViewModels
 
         private async Task GetBusLinesAsync(bool isForcedRefresh)
         {
-            var busLines = await _busRepository.GetBusLinesAsync(isForcedRefresh);
+            try
+            {
+                var busLines = await _busRepository.GetBusLinesAsync(isForcedRefresh);
 
-            LastUpdated = busLines.FirstOrDefault()
-                                  .LastUpdateDate;
+                LastUpdated = busLines.FirstOrDefault()
+                                      .LastUpdateDate;
 
-            GetBusLinesByType(busLines);
+                GetBusLinesByType(busLines);
+            }
+            catch (NoInternetException)
+            {
+                _userDilaogsService.Toast("Internet connection is necessary to get bus lines",
+                                          dismissTimer: TimeSpan.FromSeconds(5));
+            }
+            catch (Exception)
+            {
+                _userDilaogsService.Toast("Something went wrong when getting bus lines");
+            }
         }
 
         private void GetBusLinesByType(List<BusLineModel> busLines)
